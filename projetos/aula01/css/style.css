@@ -1,0 +1,191 @@
+/* ==========================================================================
+   1. RESET & CSS VARIABLES
+   ========================================================================== */
+
+:root {
+  /* Theme Colors */
+  --bg-color: #F7F7F4;
+  --primary-color: #FF1FCB;
+  --white-color: #FFFFFF;
+
+  /* Card Background & Border Colors */
+  --card-green-bg: #BCF797;
+  --card-green-border: #9BE070;
+
+  --card-orange-bg: #FFD878;
+  --card-orange-border: #DBB453;
+
+  --card-white-bg: #FFFFFF;
+  --card-white-border: #DBB453;
+
+  --card-lavanda-bg: #A194CC;
+  --card-lavanda-border: #CAC0EC;
+
+  --card-amarelo-bg: #EBF853;
+  --card-amarelo-border: #C1CB43;
+
+  --card-verde-lima-bg: #8FFF91;
+  --card-verde-lima-border: #9BE070;
+
+  /* Fonts */
+  --font-main: "Oswald", sans-serif;
+  --font-secondary: sans-serif;
+  --font-mono: monospace;
+
+  /* Layout & Transitions */
+  --container-max-width: 1080px;
+  --transition-default: all 0.3s;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-color);
+}
+
+/* ==========================================================================
+   2. LAYOUT & CONTAINERS
+   ========================================================================== */
+
+.container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+}
+
+/* ==========================================================================
+   3. HEADER / TOPBAR
+   ========================================================================== */
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 0;
+}
+
+h3 {
+  color: var(--primary-color);
+  font-family: var(--font-secondary);
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   4. TYPOGRAPHY & HERO
+   ========================================================================== */
+
+h1 {
+  font-size: 14rem;
+  text-transform: uppercase;
+  letter-spacing: -1.2rem;
+  margin-bottom: -60px;
+  text-align: center;
+}
+
+h2 {
+  font-size: 5.3rem;
+  letter-spacing: -0.3rem;
+  font-weight: 500;
+}
+
+h4 {
+  font-size: 3rem;
+  text-transform: uppercase;
+  letter-spacing: -0.2rem;
+}
+
+/* ==========================================================================
+   5. CARDS & VARIATIONS
+   ========================================================================== */
+
+.card {
+  padding: 40px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  transition: var(--transition-default);
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: rotate(6deg);
+  transition: var(--transition-default);
+}
+
+.card span {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+/* Color Variants */
+.card-green {
+  background-color: var(--card-green-bg);
+  border: 1px solid var(--card-green-border);
+}
+
+.card-orange {
+  background-color: var(--card-orange-bg);
+  border: 1px solid var(--card-orange-border);
+}
+
+.card-white {
+  background-color: var(--card-white-bg);
+  border: 1px solid var(--card-white-border);
+}
+
+.card-lavanda {
+  background-color: var(--card-lavanda-bg);
+  border: 1px solid var(--card-lavanda-border);
+}
+
+.card-amarelo-canario {
+  background-color: var(--card-amarelo-bg);
+  border: 1px solid var(--card-amarelo-border);
+}
+
+.card-verde-lima {
+  background-color: var(--card-verde-lima-bg);
+  border: 1px solid var(--card-verde-lima-border);
+}
+
+/* ==========================================================================
+   6. ROTATION UTILITIES
+   ========================================================================== */
+
+.rotate-3 {
+  transform: rotate(-3deg);
+}
+
+.rotate-3-d {
+  transform: rotate(3deg);
+}
+
+/* ==========================================================================
+   7. FOOTER & DECORATIVE SECTIONS
+   ========================================================================== */
+
+.hand {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  padding-top: 60px;
+}
+
+.tag {
+  font-size: 8rem;
+  font-weight: 900;
+  letter-spacing: -0.7rem;
+  text-align: center;
+}
+
+.faixa {
+  margin: 100px 0;
+}
+
+.chewie {
+  text-align: center;
+}
