@@ -1,0 +1,1246 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Introdução ao JavaScript — Frameworks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+  }
+
+  :root {
+    --bg: oklch(0.16 0.004 260);
+    --bg-alt: oklch(0.205 0.005 260);
+    --line: oklch(0.32 0.006 260);
+    --ink: oklch(0.96 0.003 260);
+    --ink-dim: var(--ink);
+    --ink-faint: var(--ink);
+    --accent: #F0DB4F;
+    --bg-light: oklch(0.98 0.003 95);
+    --line-light: oklch(0.85 0.006 95);
+    --ink-black: oklch(0.18 0.004 95);
+    --ink-black-dim: oklch(0.42 0.006 95);
+    --font-sans: 'Open Sans', sans-serif;
+    --font-mono: 'Open Sans', sans-serif;
+    --font-code: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+    --type-kicker: 24px;
+    --type-title: 84px;
+    --type-h2: 56px;
+    --type-subtitle: 34px;
+    --type-body: 2em;
+    --type-small: 2em;
+    --pad-x: 110px;
+    --pad-top: 90px;
+    --pad-bottom: 80px;
+    --gap-title: 44px;
+    --gap-item: 26px;
+    --ok-bg: #8FE3A6;
+    --ok-ink: #0B1F14;
+    --err-bg: #F4A6A6;
+    --err-ink: #3A0E0E;
+  }
+
+  ::selection { background: var(--accent); color: var(--bg); }
+
+  #stage {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+  }
+
+  #deck {
+    display: flex;
+    height: 1080px;
+    transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+    will-change: transform;
+  }
+
+  .slide {
+    flex: 0 0 1920px;
+    width: 1920px;
+    height: 1080px;
+    font-size: 12px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  code, pre { font-family: var(--font-code); }
+
+  /* ── Navigation UI ───────────────────────────────────────────────── */
+  #nav-dots {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 7px;
+    z-index: 100;
+  }
+  .nav-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.22);
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+    padding: 0;
+  }
+  .nav-dot.is-active {
+    background: var(--accent);
+    transform: scale(1.4);
+  }
+  #slide-counter {
+    position: fixed;
+    bottom: 20px;
+    right: 24px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.35);
+    z-index: 100;
+    user-select: none;
+  }
+
+  /* ── Extra controls (tela cheia / miniaturas) ───────────────────── */
+  #deck-extra-controls {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 2147483000;
+    display: flex;
+    gap: 8px;
+    opacity: 0.32;
+    transition: opacity 200ms ease;
+  }
+  #deck-extra-controls:hover,
+  #deck-extra-controls:focus-within {
+    opacity: 1;
+  }
+  #deck-extra-controls button {
+    all: unset;
+    box-sizing: border-box;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(20, 20, 22, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  #deck-extra-controls button:hover,
+  #deck-extra-controls button[aria-pressed="true"] {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  #deck-extra-controls button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* ── Miniaturas (thumbnails rail) ────────────────────────────────── */
+  #thumb-rail {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 210px;
+    background: rgba(8, 8, 10, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    z-index: 2000;
+    overflow-y: auto;
+    padding: 20px 14px;
+    box-sizing: border-box;
+    transform: translateX(0);
+    transition: transform 260ms cubic-bezier(.4, 0, .2, 1);
+  }
+  #thumb-rail[data-hidden="true"] { transform: translateX(-100%); }
+  #thumb-rail::-webkit-scrollbar { width: 8px; }
+  #thumb-rail::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 8px; }
+  .thumb-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+    cursor: pointer;
+  }
+  .thumb-frame {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    position: relative;
+    overflow: hidden;
+    background: #000;
+    border-radius: 6px;
+    border: 2px solid transparent;
+  }
+  .thumb-item:hover .thumb-frame { border-color: rgba(240, 219, 79, 0.5); }
+  .thumb-item.is-active .thumb-frame { border-color: var(--accent); }
+  .thumb-frame .slide-clone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+    transform-origin: top left;
+    pointer-events: none;
+  }
+  .thumb-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.3;
+    color: rgba(255, 255, 255, 0.55);
+    letter-spacing: 0.01em;
+  }
+  .thumb-item.is-active .thumb-label { color: var(--accent); }
+</style>
+</head>
+<body>
+<nav id="nav-dots"></nav>
+<div id="slide-counter"></div>
+<div id="thumb-rail" aria-label="Miniaturas dos slides"><div id="thumb-rail-inner"></div></div>
+<div id="deck-extra-controls">
+  <button type="button" id="deck-toggle-rail" aria-pressed="true" aria-label="Ocultar miniaturas" title="Miniaturas (T)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="1.5" y="2.5" width="13" height="11" rx="1.5"></rect>
+      <line x1="6" y1="2.5" x2="6" y2="13.5"></line>
+    </svg>
+  </button>
+  <button type="button" id="deck-toggle-fullscreen" aria-pressed="false" aria-label="Tela cheia" title="Tela cheia (F)">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M2 6V2h4"></path>
+      <path d="M14 6V2h-4"></path>
+      <path d="M2 10v4h4"></path>
+      <path d="M14 10v4h-4"></path>
+    </svg>
+  </button>
+</div>
+<div id="stage">
+<div id="deck">
+
+<section class="slide" data-label="Capa" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;align-items:center;padding:0 var(--pad-x);">
+  <div style="flex:1.3;">
+    <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:36px;">FRAMEWORKS</div>
+    <h1 style="font-size:7em;font-weight:900;margin:0;line-height:1.02;letter-spacing:-0.07em;">Introdução ao<br/>JavaScript</h1>
+    <div style="font-size:var(--type-subtitle);color:var(--ink-dim);font-weight:400;margin-top:28px;">Frameworks</div>
+    <p style="font-size:var(--type-body);color:var(--ink-dim);line-height:1.5;margin-top:40px;max-width:900px;">Uma linguagem de script multiparadigma, multiplataforma, pequena e leve.</p>
+  </div>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+    <svg viewBox="0 0 380 380" width="420" height="420" aria-hidden="true">
+      <circle cx="58" cy="52" r="2.2" fill="var(--ink)" opacity="0.5"></circle>
+      <circle cx="320" cy="40" r="1.6" fill="var(--ink)" opacity="0.4"></circle>
+      <circle cx="340" cy="120" r="2.4" fill="var(--ink)" opacity="0.5"></circle>
+      <circle cx="40" cy="200" r="1.8" fill="var(--ink)" opacity="0.4"></circle>
+      <circle cx="70" cy="310" r="2" fill="var(--ink)" opacity="0.45"></circle>
+      <circle cx="330" cy="300" r="1.6" fill="var(--ink)" opacity="0.35"></circle>
+      <circle cx="300" cy="220" r="1.4" fill="var(--ink)" opacity="0.3"></circle>
+      <circle cx="120" cy="30" r="1.4" fill="var(--ink)" opacity="0.3"></circle>
+      <path d="M120 150 h140 v90 a70 70 0 0 1 -140 0 z" fill="var(--bg-alt)" stroke="var(--accent)" stroke-width="4"></path>
+      <path d="M260 175 h26 a30 30 0 0 1 0 60 h-26" fill="none" stroke="var(--accent)" stroke-width="4"></path>
+      <text x="190" y="230" text-anchor="middle" font-family="var(--font-sans)" font-size="46" font-weight="800" fill="var(--accent)">JS</text>
+      <path d="M150 150 q4 -20 -6 -30" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" opacity="0.5"></path>
+      <path d="M180 150 q-2 -26 10 -38" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" opacity="0.5"></path>
+      <path d="M210 150 q6 -18 -2 -28" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" opacity="0.5"></path>
+      <circle cx="150" cy="270" r="5" fill="var(--accent)" opacity="0.8"></circle>
+      <circle cx="163" cy="290" r="3.4" fill="var(--accent)" opacity="0.55"></circle>
+      <circle cx="140" cy="295" r="2.6" fill="var(--accent)" opacity="0.4"></circle>
+    </svg>
+  </div>
+</section>
+
+<section class="slide" data-label="Vantagens" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">01 — POR QUE JAVASCRIPT</div>
+  <h2 style="font-size:7em;font-weight:900;margin:0 0 56px;letter-spacing:-0.07em;">Vantagens</h2>
+  <div style="display:flex;flex-direction:column;gap:26px;flex:1;justify-content:center;max-width:1620px;">
+    <div style="display:flex;gap:24px;align-items:baseline;border-top:1px solid var(--line);padding-top:22px;">
+      <div style="color:var(--accent);font-size:var(--type-body);flex-shrink:0;">➜</div>
+      <p style="font-size:var(--type-body);line-height:1.5;margin:0;">Não precisa de um compilador porque os navegadores de internet o leem junto com o HTML.</p>
+    </div>
+    <div style="display:flex;gap:24px;align-items:baseline;border-top:1px solid var(--line);padding-top:22px;">
+      <div style="color:var(--accent);font-size:var(--type-body);flex-shrink:0;">➜</div>
+      <p style="font-size:var(--type-body);line-height:1.5;margin:0;">Localiza mais facilmente os erros e, logo, os corrige mais rapidamente.</p>
+    </div>
+    <div style="display:flex;gap:24px;align-items:baseline;border-top:1px solid var(--line);padding-top:22px;">
+      <div style="color:var(--accent);font-size:var(--type-body);flex-shrink:0;">➜</div>
+      <p style="font-size:var(--type-body);line-height:1.5;margin:0;">Consegue escolher certos elementos de páginas de internet ou eventos específicos, como cliques e rolagens de mouse personalizados.</p>
+    </div>
+    <div style="display:flex;gap:24px;align-items:baseline;border-top:1px solid var(--line);padding-top:22px;">
+      <div style="color:var(--accent);font-size:var(--type-body);flex-shrink:0;">➜</div>
+      <p style="font-size:var(--type-body);line-height:1.5;margin:0;">Tem mais liberdade para trabalhar, já que é compatível com várias plataformas e navegadores.</p>
+    </div>
+    <div style="display:flex;gap:24px;align-items:baseline;border-top:1px solid var(--line);padding-top:22px;">
+      <div style="color:var(--accent);font-size:var(--type-body);flex-shrink:0;">➜</div>
+      <p style="font-size:var(--type-body);line-height:1.5;margin:0;">Pode validar entradas e reduzir a necessidade de verificações manuais de dados.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="A Terceira Camada do Bolo" style="background:var(--bg-light);color:var(--ink-black);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">01 — POR QUE JAVASCRIPT</div>
+  <h2 style="font-size:6.2em;font-weight:900;margin:0 0 56px;letter-spacing:-0.06em;">A terceira camada do bolo</h2>
+  <div style="display:grid;grid-template-columns:1fr 0.9fr;gap:100px;flex:1;align-items:center;">
+    <div>
+      <p style="font-size:var(--type-body);line-height:1.55;margin:0;max-width:820px;">Toda vez que uma página da web faz mais do que simplesmente mostrar a você informação estática — mostrando conteúdo que se atualiza em um intervalo de tempo, mapas interativos ou gráficos 2D/3D animados, etc.</p>
+      <div style="font-family:var(--font-mono);font-size:18px;color:var(--ink-black-dim);letter-spacing:0.04em;margin-top:40px;">FONTE: MOZILLA.ORG</div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;">
+      <svg viewBox="0 0 340 320" width="380" height="360" aria-hidden="true">
+        <ellipse cx="170" cy="290" rx="130" ry="18" fill="var(--ink-black)" opacity="0.06"></ellipse>
+        <rect x="60" y="220" width="220" height="50" rx="10" fill="oklch(0.85 0.03 60)"></rect>
+        <text x="170" y="252" text-anchor="middle" font-size="20" font-weight="700" fill="var(--ink-black)">HTML</text>
+        <rect x="75" y="160" width="190" height="50" rx="10" fill="oklch(0.78 0.05 250)"></rect>
+        <text x="170" y="192" text-anchor="middle" font-size="20" font-weight="700" fill="var(--ink-black)">CSS</text>
+        <rect x="90" y="100" width="160" height="50" rx="10" fill="var(--accent)"></rect>
+        <text x="170" y="132" text-anchor="middle" font-size="20" font-weight="800" fill="var(--ink-black)">JavaScript</text>
+        <circle cx="170" cy="80" r="12" fill="#D96C6C"></circle>
+        <path d="M170 68 q6 -14 16 -16" fill="none" stroke="#5A7A4A" stroke-width="4" stroke-linecap="round"></path>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Características" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">01 — POR QUE JAVASCRIPT</div>
+  <h2 style="font-size:7em;font-weight:900;margin:0 0 56px;letter-spacing:-0.07em;">Características</h2>
+  <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:100px;flex:1;align-items:center;">
+    <div style="display:flex;flex-direction:column;gap:26px;">
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line);padding-top:20px;">
+        <div style="color:var(--accent);flex-shrink:0;">•</div>
+        <p style="font-size:var(--type-body);line-height:1.5;margin:0;">Tem uma biblioteca padrão de objetos, como <code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">Array</code>, <code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">Date</code> e <code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">Math</code>.</p>
+      </div>
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line);padding-top:20px;">
+        <div style="color:var(--accent);flex-shrink:0;">•</div>
+        <p style="font-size:var(--type-body);line-height:1.5;margin:0;">Possui tipagem fraca e dinâmica.</p>
+      </div>
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line);padding-top:20px;">
+        <div style="color:var(--accent);flex-shrink:0;">•</div>
+        <p style="font-size:var(--type-body);line-height:1.5;margin:0;">Pode executar no lado cliente ou no lado servidor.</p>
+      </div>
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line);padding-top:20px;">
+        <div style="color:var(--accent);flex-shrink:0;">•</div>
+        <p style="font-size:var(--type-body);line-height:1.5;margin:0;">Segue a especificação ECMA 262 e está em constante aperfeiçoamento.</p>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:16px;color:var(--ink-dim);opacity:0.6;letter-spacing:0.04em;margin-top:10px;">FONTE: MOZILLA.ORG</div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;">
+      <svg viewBox="0 0 220 220" width="240" height="240" aria-hidden="true">
+        <rect x="6" y="6" width="208" height="208" rx="28" fill="var(--accent)"></rect>
+        <text x="118" y="150" text-anchor="middle" font-size="92" font-weight="800" fill="var(--ink-black)">JS</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Inserindo JS" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;justify-content:center;padding:0 var(--pad-x);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">02 — PRIMEIROS PASSOS</div>
+  <h2 style="font-size:7em;font-weight:900;margin:0 0 64px;letter-spacing:-0.07em;">Inserindo JS</h2>
+  <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:56px 64px;max-width:1100px;">
+    <pre style="margin:0;font-size:34px;line-height:1.8;color:var(--ink);"><code>&lt;script&gt;
+  <span style="opacity:0.55;">// O JavaScript fica aqui</span>
+&lt;/script&gt;</code></pre>
+  </div>
+</section>
+
+<section class="slide" data-label="Ambiente de Testes" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">02 — PRIMEIROS PASSOS</div>
+  <h2 style="font-size:7em;font-weight:900;margin:0 0 56px;letter-spacing:-0.07em;">Ambiente de testes</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:56px;flex:1;align-content:start;">
+    <div>
+      <div style="font-family:var(--font-mono);font-size:20px;color:var(--accent);font-weight:700;letter-spacing:0.04em;margin-bottom:18px;">programa.html</div>
+      <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:16px;padding:36px 40px;">
+        <pre style="margin:0;font-size:22px;line-height:1.8;color:var(--ink);"><code>&lt;html&gt;
+  &lt;body&gt;
+    &lt;pre&gt;
+      &lt;script src="programa.js"&gt;&lt;/script&gt;
+    &lt;/pre&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+    </div>
+    <div>
+      <div style="font-family:var(--font-mono);font-size:20px;color:var(--accent);font-weight:700;letter-spacing:0.04em;margin-bottom:18px;">programa.js</div>
+      <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:16px;padding:36px 40px;">
+        <pre style="margin:0;font-size:22px;line-height:1.8;color:var(--ink);"><code>document.writeln('123 Testando');</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Hello World" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">02 — PRIMEIROS PASSOS</div>
+  <h2 style="font-size:7em;font-weight:900;margin:0 0 56px;letter-spacing:-0.07em;">Hello World</h2>
+  <div style="display:grid;grid-template-columns:0.8fr 1.2fr;gap:100px;flex:1;align-items:center;">
+    <div style="display:flex;flex-direction:column;gap:26px;">
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line);padding-top:20px;">
+        <div style="color:var(--accent);flex-shrink:0;">➜</div>
+        <p style="font-size:var(--type-body);line-height:1.5;margin:0;">Crie uma nova página</p>
+      </div>
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line);padding-top:20px;">
+        <div style="color:var(--accent);flex-shrink:0;">➜</div>
+        <p style="font-size:var(--type-body);line-height:1.5;margin:0;">Dentro da seção <code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">&lt;body&gt;</code> insira o trecho:</p>
+      </div>
+    </div>
+    <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:48px 56px;">
+      <pre style="margin:0;font-size:30px;line-height:1.8;color:var(--ink);"><code>&lt;script&gt;
+  document.write("Hello World!");
+&lt;/script&gt;</code></pre>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Classe Document" style="background:var(--bg-light);color:var(--ink-black);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">02 — PRIMEIROS PASSOS</div>
+  <h2 style="font-size:7em;font-weight:900;margin:0 0 64px;letter-spacing:-0.07em;">Classe document</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:100px;flex:1;align-content:start;">
+    <div style="display:flex;flex-direction:column;gap:22px;">
+      <div style="font-size:var(--type-subtitle);font-weight:700;">Propriedades de exemplo</div>
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line-light);padding-top:18px;">
+        <code style="font-family:var(--font-code);font-size:24px;color:var(--ink-black);font-weight:700;flex-shrink:0;">title</code>
+        <div style="font-size:var(--type-small);color:var(--ink-black-dim);">Define ou retorna o título da página</div>
+      </div>
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line-light);padding-top:18px;">
+        <code style="font-family:var(--font-code);font-size:24px;color:var(--ink-black);font-weight:700;flex-shrink:0;">URL</code>
+        <div style="font-size:var(--type-small);color:var(--ink-black-dim);">Retorna o URL completo da página</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:22px;border-left:1px solid var(--line-light);padding-left:48px;">
+      <div style="font-size:var(--type-subtitle);font-weight:700;">Métodos de exemplo</div>
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line-light);padding-top:18px;">
+        <code style="font-family:var(--font-code);font-size:24px;color:var(--ink-black);font-weight:700;flex-shrink:0;">write()</code>
+        <div style="font-size:var(--type-small);color:var(--ink-black-dim);">Escreve texto no documento</div>
+      </div>
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line-light);padding-top:18px;">
+        <code style="font-family:var(--font-code);font-size:24px;color:var(--ink-black);font-weight:700;flex-shrink:0;">writeln()</code>
+        <div style="font-size:var(--type-small);color:var(--ink-black-dim);">Escreve uma linha de texto no documento</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Hello World — Título" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">02 — PRIMEIROS PASSOS</div>
+  <h2 style="font-size:7em;font-weight:900;margin:0 0 56px;letter-spacing:-0.07em;">Hello World</h2>
+  <div style="display:grid;grid-template-columns:0.8fr 1.2fr;gap:100px;flex:1;align-items:center;">
+    <div style="display:flex;flex-direction:column;gap:26px;">
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line);padding-top:20px;">
+        <div style="color:var(--accent);flex-shrink:0;">➜</div>
+        <p style="font-size:var(--type-body);line-height:1.5;margin:0;">Na página criada anteriormente, defina um título: “JavaScript Hello World!”</p>
+      </div>
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line);padding-top:20px;">
+        <div style="color:var(--accent);flex-shrink:0;">➜</div>
+        <p style="font-size:var(--type-body);line-height:1.5;margin:0;">Altere o script:</p>
+      </div>
+    </div>
+    <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:48px 56px;">
+      <pre style="margin:0;font-size:28px;line-height:1.8;color:var(--ink);"><code>&lt;script&gt;
+  document.write("&lt;h2&gt;" + document.title + "&lt;/h2&gt;");
+&lt;/script&gt;</code></pre>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Reagindo a Eventos" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">02 — PRIMEIROS PASSOS</div>
+  <h2 style="font-size:6.4em;font-weight:900;margin:0 0 56px;letter-spacing:-0.06em;">Reagindo a eventos</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:100px;flex:1;align-items:center;">
+    <div style="display:flex;flex-direction:column;gap:22px;">
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line);padding-top:18px;">
+        <div style="color:var(--accent);flex-shrink:0;">•</div>
+        <p style="font-size:var(--type-body);line-height:1.5;margin:0;">É possível disparar scripts a partir de diversos tipos de eventos.</p>
+      </div>
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line);padding-top:18px;">
+        <div style="color:var(--accent);flex-shrink:0;">•</div>
+        <p style="font-size:var(--type-body);line-height:1.5;margin:0;">O primeiro que iremos estudar é o de um clique em um botão, com a tag <code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">&lt;button&gt;</code>.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:6px;padding-left:40px;">
+        <div style="font-size:var(--type-small);color:var(--ink-dim);">Atributos: <code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">type="button"</code></div>
+        <div style="font-size:var(--type-small);color:var(--ink-dim);"><code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">onclick="alert('Bem vindo!')"</code></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:32px;">
+      <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:40px 48px;">
+        <pre style="margin:0;font-size:24px;line-height:1.8;color:var(--ink);white-space:pre-wrap;"><code>&lt;button type="button" onclick="alert('Bem vindo!')"&gt;Clique Aqui!&lt;/button&gt;</code></pre>
+      </div>
+      <button type="button" style="align-self:flex-start;font-family:var(--font-sans);font-size:26px;font-weight:700;background:var(--accent);color:var(--ink-black);border:none;border-radius:12px;padding:20px 40px;cursor:default;">Clique Aqui!</button>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Variáveis e Constantes" style="background:var(--bg-light);color:var(--ink-black);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">03 — VARIÁVEIS</div>
+  <h2 style="font-size:6.4em;font-weight:900;margin:0 0 56px;letter-spacing:-0.06em;">Variáveis e constantes</h2>
+  <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:100px;flex:1;align-items:center;">
+    <p style="font-size:var(--type-body);line-height:1.55;margin:0;max-width:880px;">É muito importante em uma linguagem de programação poder armazenar dados de forma temporária — essa é a função das variáveis. Sempre que precisar armazenar uma informação, vamos usar as variáveis: podemos inserir, remover ou alterar informações nelas. Vamos ver como usar esse recurso fundamental.</p>
+    <div style="display:flex;align-items:center;justify-content:center;">
+      <svg viewBox="0 0 300 300" width="320" height="320" aria-hidden="true">
+        <rect x="40" y="40" width="220" height="220" rx="14" fill="none" stroke="var(--ink-black-dim)" stroke-width="3"></rect>
+        <rect x="55" y="60" width="190" height="50" rx="8" fill="var(--accent)" opacity="0.85"></rect>
+        <rect x="70" y="76" width="30" height="18" rx="3" fill="var(--ink-black)" opacity="0.4"></rect>
+        <text x="150" y="93" text-anchor="middle" font-size="16" font-weight="700" fill="var(--ink-black)">Gaveta 1</text>
+        <rect x="55" y="125" width="190" height="50" rx="8" fill="var(--ink-black)" opacity="0.08"></rect>
+        <rect x="70" y="141" width="30" height="18" rx="3" fill="var(--ink-black)" opacity="0.3"></rect>
+        <text x="150" y="158" text-anchor="middle" font-size="16" font-weight="700" fill="var(--ink-black)">Gaveta 2</text>
+        <rect x="55" y="190" width="190" height="50" rx="8" fill="var(--ink-black)" opacity="0.08"></rect>
+        <rect x="70" y="206" width="30" height="18" rx="3" fill="var(--ink-black)" opacity="0.3"></rect>
+        <text x="150" y="223" text-anchor="middle" font-size="16" font-weight="700" fill="var(--ink-black)">Gaveta 3</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Case Sensitive" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">03 — VARIÁVEIS</div>
+  <h2 style="font-size:5.6em;font-weight:900;margin:0 0 56px;letter-spacing:-0.05em;">JavaScript é Case Sensitive</h2>
+  <div style="display:flex;flex-direction:column;gap:48px;flex:1;justify-content:center;max-width:1500px;">
+    <p style="font-size:var(--type-body);line-height:1.5;margin:0;">Case Sensitive significa algo como “sensível à caixa das letras” ou “sensível a maiúsculas e minúsculas”.</p>
+    <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:48px 56px;">
+      <pre style="margin:0;font-size:30px;line-height:1.9;color:var(--ink);"><code>const Fruta = "Banana"  <span style="opacity:0.55;">// é diferente de</span>
+const fruta = "Maçã"</code></pre>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Tipagem em JavaScript" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">03 — VARIÁVEIS</div>
+  <h2 style="font-size:6em;font-weight:900;margin:0 0 12px;letter-spacing:-0.06em;">Tipagem em JavaScript</h2>
+  <div style="font-size:var(--type-subtitle);color:var(--ink-dim);margin-bottom:44px;">JavaScript é uma linguagem de tipagem dinâmica e fraca</div>
+  <div style="display:grid;grid-template-columns:1fr 1.1fr;gap:80px;flex:1;align-items:start;">
+    <div style="display:flex;flex-direction:column;gap:22px;">
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line);padding-top:18px;">
+        <div style="color:var(--accent);flex-shrink:0;">➜</div>
+        <div style="font-size:var(--type-small);line-height:1.4;">Não é necessário declarar o tipo de uma variável</div>
+      </div>
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line);padding-top:18px;">
+        <div style="color:var(--accent);flex-shrink:0;">➜</div>
+        <div style="font-size:var(--type-small);line-height:1.4;">Todas as variáveis são objetos (referência)</div>
+      </div>
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line);padding-top:18px;">
+        <div style="color:var(--accent);flex-shrink:0;">➜</div>
+        <div style="font-size:var(--type-small);line-height:1.4;">Números são todos reais de 64 bits</div>
+      </div>
+      <div style="display:flex;gap:20px;align-items:baseline;border-top:1px solid var(--line);padding-top:18px;">
+        <div style="color:var(--accent);flex-shrink:0;">➜</div>
+        <div style="font-size:var(--type-small);line-height:1.4;">A variável “altera” seu tipo conforme os valores atribuídos</div>
+      </div>
+    </div>
+    <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:44px 52px;">
+      <pre style="margin:0;font-size:24px;line-height:1.85;color:var(--ink);"><code>var x;         <span style="opacity:0.55;">// x é indefinido</span>
+x = 5;         <span style="opacity:0.55;">// x é um número</span>
+x = "John";    <span style="opacity:0.55;">// x é uma string</span>
+x = true;      <span style="opacity:0.55;">// x é um booleano</span>
+x = null;      <span style="opacity:0.55;">// x é nulo</span></code></pre>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Var" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">03 — VARIÁVEIS</div>
+  <h2 style="font-size:7em;font-weight:900;margin:0 0 48px;letter-spacing:-0.07em;">Var</h2>
+  <div style="display:grid;grid-template-columns:0.85fr 1.15fr;gap:80px;flex:1;align-items:center;">
+    <p style="font-size:26px;line-height:1.55;margin:0;color:var(--ink-dim);">Declarar variáveis em JavaScript é bem simples: diferente de linguagens tradicionais como C++, não informamos o tipo de dado e, por isso, não precisamos de operações como typecast. Basta usar a palavra reservada <code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">var</code> e o nome da variável.</p>
+    <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:36px 44px;">
+      <pre style="margin:0;font-size:19px;line-height:1.75;color:var(--ink);"><code>&lt;!doctype html&gt;
+&lt;html lang="pt-br"&gt;
+&lt;head&gt;
+  &lt;title&gt;Curso de Javascript&lt;/title&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;script&gt;
+    var jogador;
+    var vidas;
+    var municao;
+  &lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Atribuição de Valores" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">03 — VARIÁVEIS</div>
+  <h2 style="font-size:6em;font-weight:900;margin:0 0 56px;letter-spacing:-0.06em;">Atribuição de valores</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:100px;flex:1;align-items:center;">
+    <p style="font-size:var(--type-body);line-height:1.55;margin:0;max-width:820px;">Veja que a atribuição é simples: usamos o operador <code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">=</code> e, como já foi destacado, se o valor inserido for um texto, deve vir entre aspas <code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">"texto"</code>.</p>
+    <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:48px 56px;">
+      <pre style="margin:0;font-size:28px;line-height:1.85;color:var(--ink);"><code>&lt;script&gt;
+  var jogador = "Bruno";
+  var vidas = 3;
+  var municao = 100;
+&lt;/script&gt;</code></pre>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Variáveis — var, let, const" style="background:var(--bg-light);color:var(--ink-black);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">03 — VARIÁVEIS</div>
+  <h2 style="font-size:7em;font-weight:900;margin:0 0 56px;letter-spacing:-0.07em;">Variáveis</h2>
+  <div style="display:flex;flex-direction:column;gap:40px;flex:1;justify-content:center;max-width:1620px;">
+    <p style="font-size:var(--type-body);line-height:1.55;margin:0;">Diferentemente de outras linguagens, como Java, no JavaScript não há necessidade de declarar o tipo da variável — mas isso não significa que ela não tem tipo. Na verdade, o JS faz a tipagem dinamicamente, de forma similar ao PHP.</p>
+    <div style="border-left:4px solid var(--accent);padding:8px 0 8px 40px;">
+      <p style="font-size:var(--type-small);line-height:1.5;margin:0;font-style:italic;color:var(--ink-black-dim);">Vale lembrar que podemos declarar uma variável em JavaScript com três operadores: <code style="font-family:var(--font-code);font-style:normal;">var</code>, <code style="font-family:var(--font-code);font-style:normal;">let</code> e <code style="font-family:var(--font-code);font-style:normal;">const</code>. De acordo com o ECMA2015, utilizar o operador <code style="font-family:var(--font-code);font-style:normal;">var</code> se tornou uma má prática.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Escopo de Bloco — var" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">03 — VARIÁVEIS</div>
+  <div style="display:flex;align-items:center;gap:28px;margin-bottom:40px;">
+    <h2 style="font-size:6em;font-weight:900;margin:0;letter-spacing:-0.06em;">Escopo de bloco</h2>
+    <span style="display:inline-flex;align-items:center;font-family:var(--font-mono);font-size:20px;font-weight:700;letter-spacing:0.04em;color:var(--ok-ink);background:var(--ok-bg);border-radius:999px;padding:10px 24px;">FUNCIONA</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1.1fr;gap:80px;flex:1;align-items:center;">
+    <p style="font-size:26px;line-height:1.55;margin:0;color:var(--ink-dim);">Variáveis declaradas com <code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">var</code> têm escopo de função ou escopo global — ou seja, são visíveis dentro da função em que foram declaradas ou em todo o programa, se declaradas fora de qualquer função.</p>
+    <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:40px 48px;">
+      <pre style="margin:0;font-size:21px;line-height:1.8;color:var(--ink);"><code>function minhaFuncao() {
+  for (var i = 0; i &lt; 5; i++) {
+    console.log(i);
+  }
+  console.log(i); <span style="opacity:0.55;">// i ainda é acessível aqui</span>
+}
+
+minhaFuncao();</code></pre>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Escopo de Bloco — let" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">03 — VARIÁVEIS</div>
+  <div style="display:flex;align-items:center;gap:28px;margin-bottom:40px;">
+    <h2 style="font-size:6em;font-weight:900;margin:0;letter-spacing:-0.06em;">Escopo de bloco</h2>
+    <span style="display:inline-flex;align-items:center;font-family:var(--font-mono);font-size:20px;font-weight:700;letter-spacing:0.04em;color:var(--err-ink);background:var(--err-bg);border-radius:999px;padding:10px 24px;">ERRO</span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1.1fr;gap:80px;flex:1;align-items:center;">
+    <p style="font-size:26px;line-height:1.55;margin:0;color:var(--ink-dim);">Variáveis declaradas com <code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">let</code> são “içadas” para o começo do bloco em que são definidas — isso também é conhecido como hoisting.</p>
+    <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:40px 48px;">
+      <pre style="margin:0;font-size:19px;line-height:1.75;color:var(--ink);"><code>function minhaFuncao() {
+  console.log(i); <span style="opacity:0.55;">// ReferenceError:
+  // 'i' não está acessível
+  // antes de sua declaração</span>
+
+  for (let i = 0; i &lt; 5; i++) {
+    console.log(i);
+  }
+}
+
+minhaFuncao();</code></pre>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Escopo de Bloco — Redeclaração" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">03 — VARIÁVEIS</div>
+  <h2 style="font-size:6em;font-weight:900;margin:0 0 24px;letter-spacing:-0.06em;">Escopo de bloco</h2>
+  <p style="font-size:26px;line-height:1.5;margin:0 0 44px;color:var(--ink-dim);max-width:1500px;">Variáveis declaradas com <code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">let</code> são “içadas” para o começo do bloco em que são definidas (hoisting) — e isso muda o comportamento da redeclaração.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:56px;flex:1;align-content:start;">
+    <div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--ok-bg);color:var(--ok-ink);font-weight:800;">✓</span>
+        <div style="font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--ink);">Permite redeclaração — var</div>
+      </div>
+      <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:16px;padding:32px 40px;">
+        <pre style="margin:0;font-size:24px;line-height:1.85;color:var(--ink);"><code>var nome = "Francisco";
+var nome = "Antônio";</code></pre>
+      </div>
+    </div>
+    <div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--err-bg);color:var(--err-ink);font-weight:800;">✕</span>
+        <div style="font-family:var(--font-mono);font-size:20px;font-weight:700;color:var(--ink);">Não permite redeclaração — let</div>
+      </div>
+      <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:16px;padding:32px 40px;">
+        <pre style="margin:0;font-size:24px;line-height:1.85;color:var(--ink);"><code>let nome = "Francisco";
+let nome = "Antônio"; <span style="opacity:0.55;">// SyntaxError</span></code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Tipos de Variáveis" style="background:var(--bg-light);color:var(--ink-black);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">03 — VARIÁVEIS</div>
+  <h2 style="font-size:6.4em;font-weight:900;margin:0 0 48px;letter-spacing:-0.06em;">Tipos de variáveis</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px 90px;flex:1;align-content:start;">
+    <div style="display:flex;gap:18px;align-items:baseline;border-top:1px solid var(--line-light);padding-top:18px;">
+      <div style="font-family:var(--font-mono);font-size:20px;color:var(--accent);font-weight:800;flex-shrink:0;min-width:150px;">STRINGS</div>
+      <div style="font-size:22px;line-height:1.4;color:var(--ink-black);">Uma String nada mais é que texto puro.</div>
+    </div>
+    <div style="display:flex;gap:18px;align-items:baseline;border-top:1px solid var(--line-light);padding-top:18px;">
+      <div style="font-family:var(--font-mono);font-size:20px;color:var(--accent);font-weight:800;flex-shrink:0;min-width:150px;">NUMBERS</div>
+      <div style="font-size:22px;line-height:1.4;color:var(--ink-black);">São os números, sejam integer, float, double etc.</div>
+    </div>
+    <div style="display:flex;gap:18px;align-items:baseline;border-top:1px solid var(--line-light);padding-top:18px;">
+      <div style="font-family:var(--font-mono);font-size:20px;color:var(--accent);font-weight:800;flex-shrink:0;min-width:150px;">BOOLEANS</div>
+      <div style="font-size:22px;line-height:1.4;color:var(--ink-black);">São os operadores booleanos (<code style="font-family:var(--font-code);">true</code> ou <code style="font-family:var(--font-code);">false</code>).</div>
+    </div>
+    <div style="display:flex;gap:18px;align-items:baseline;border-top:1px solid var(--line-light);padding-top:18px;">
+      <div style="font-family:var(--font-mono);font-size:20px;color:var(--accent);font-weight:800;flex-shrink:0;min-width:150px;">ARRAYS</div>
+      <div style="font-size:22px;line-height:1.4;color:var(--ink-black);">Estrutura de dado para armazenar uma coleção de valores, de qualquer tipo.</div>
+    </div>
+    <div style="display:flex;gap:18px;align-items:baseline;border-top:1px solid var(--line-light);padding-top:18px;">
+      <div style="font-family:var(--font-mono);font-size:20px;color:var(--accent);font-weight:800;flex-shrink:0;min-width:150px;">OBJECTS</div>
+      <div style="font-size:22px;line-height:1.4;color:var(--ink-black);">Conjunto de atributos aninhados a uma variável denomina-se um objeto.</div>
+    </div>
+    <div style="display:flex;gap:18px;align-items:baseline;border-top:1px solid var(--line-light);padding-top:18px;">
+      <div style="font-family:var(--font-mono);font-size:20px;color:var(--accent);font-weight:800;flex-shrink:0;min-width:150px;">FUNCTIONS</div>
+      <div style="font-size:22px;line-height:1.4;color:var(--ink-black);">É possível declarar uma variável como uma função, fazer operações e retornar o valor. Muito usado no paradigma funcional.</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Operadores Aritméticos" style="background:var(--bg-light);color:var(--ink-black);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">04 — OPERADORES</div>
+  <h2 style="font-size:6.4em;font-weight:900;margin:0 0 64px;letter-spacing:-0.06em;">Operadores aritméticos</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px 40px;flex:1;align-content:start;">
+    <div style="border-top:3px solid var(--accent);padding-top:20px;"><div style="font-family:var(--font-code);font-size:52px;font-weight:700;color:var(--ink-black);">**</div><div style="font-size:22px;color:var(--ink-black-dim);margin-top:6px;">Potenciação</div></div>
+    <div style="border-top:3px solid var(--accent);padding-top:20px;"><div style="font-family:var(--font-code);font-size:52px;font-weight:700;color:var(--ink-black);">*</div><div style="font-size:22px;color:var(--ink-black-dim);margin-top:6px;">Multiplicação</div></div>
+    <div style="border-top:3px solid var(--accent);padding-top:20px;"><div style="font-family:var(--font-code);font-size:52px;font-weight:700;color:var(--ink-black);">/</div><div style="font-size:22px;color:var(--ink-black-dim);margin-top:6px;">Divisão</div></div>
+    <div style="border-top:3px solid var(--accent);padding-top:20px;"><div style="font-family:var(--font-code);font-size:52px;font-weight:700;color:var(--ink-black);">+</div><div style="font-size:22px;color:var(--ink-black-dim);margin-top:6px;">Adição ou concatenar literal</div></div>
+    <div style="border-top:3px solid var(--accent);padding-top:20px;"><div style="font-family:var(--font-code);font-size:52px;font-weight:700;color:var(--ink-black);">-</div><div style="font-size:22px;color:var(--ink-black-dim);margin-top:6px;">Subtração ou inversor de sinal</div></div>
+    <div style="border-top:3px solid var(--accent);padding-top:20px;"><div style="font-family:var(--font-code);font-size:52px;font-weight:700;color:var(--ink-black);">%</div><div style="font-size:22px;color:var(--ink-black-dim);margin-top:6px;">Resto da divisão</div></div>
+  </div>
+</section>
+
+<section class="slide" data-label="Operadores Relacionais" style="background:var(--bg-light);color:var(--ink-black);font-family:var(--font-sans);display:flex;flex-direction:column;padding:32px var(--pad-x) 40px;">
+  <div style="font-family:var(--font-mono);font-size:18px;color:var(--accent);letter-spacing:0.08em;margin-bottom:8px;">04 — OPERADORES</div>
+  <h2 style="font-size:6em;font-weight:900;margin:0 0 24px;letter-spacing:-0.06em;">Operadores relacionais</h2>
+  <table style="width:100%;border-collapse:collapse;table-layout:fixed;font-size:20px;line-height:1.3;">
+    <colgroup><col style="width:10%;"><col style="width:16%;"><col style="width:20%;"><col style="width:54%;"></colgroup>
+    <thead><tr>
+      <th style="text-align:left;font-family:var(--font-mono);font-size:15px;font-weight:700;color:var(--ink-black);letter-spacing:0.03em;text-transform:uppercase;border-bottom:2px solid var(--accent);padding:10px 14px;">Operador</th>
+      <th style="text-align:left;font-family:var(--font-mono);font-size:15px;font-weight:700;color:var(--ink-black);letter-spacing:0.03em;text-transform:uppercase;border-bottom:2px solid var(--accent);padding:10px 14px;">Nome</th>
+      <th style="text-align:left;font-family:var(--font-mono);font-size:15px;font-weight:700;color:var(--ink-black);letter-spacing:0.03em;text-transform:uppercase;border-bottom:2px solid var(--accent);padding:10px 14px;">Exemplo</th>
+      <th style="text-align:left;font-family:var(--font-mono);font-size:15px;font-weight:700;color:var(--ink-black);letter-spacing:0.03em;text-transform:uppercase;border-bottom:2px solid var(--accent);padding:10px 14px;">Resultado</th>
+    </tr></thead>
+    <tbody>
+      <tr><td style="font-family:var(--font-code);font-weight:700;border-bottom:1px solid var(--line-light);padding:12px 14px;">==</td><td style="border-bottom:1px solid var(--line-light);padding:12px 14px;">Igual</td><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:12px 14px;">a == b</td><td style="border-bottom:1px solid var(--line-light);padding:12px 14px;">Verdadeiro se a for igual a b</td></tr>
+      <tr><td style="font-family:var(--font-code);font-weight:700;border-bottom:1px solid var(--line-light);padding:12px 14px;">!=</td><td style="border-bottom:1px solid var(--line-light);padding:12px 14px;">Diferente</td><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:12px 14px;">a != b</td><td style="border-bottom:1px solid var(--line-light);padding:12px 14px;">Verdadeiro se a não for igual a b</td></tr>
+      <tr><td style="font-family:var(--font-code);font-weight:700;border-bottom:1px solid var(--line-light);padding:12px 14px;">&lt;&gt;</td><td style="border-bottom:1px solid var(--line-light);padding:12px 14px;">Diferente</td><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:12px 14px;">a &lt;&gt; b</td><td style="border-bottom:1px solid var(--line-light);padding:12px 14px;">Verdadeiro se a não for igual a b</td></tr>
+      <tr><td style="font-family:var(--font-code);font-weight:700;border-bottom:1px solid var(--line-light);padding:12px 14px;">===</td><td style="border-bottom:1px solid var(--line-light);padding:12px 14px;">Idêntico</td><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:12px 14px;">a === b</td><td style="border-bottom:1px solid var(--line-light);padding:12px 14px;">Verdadeiro se a for igual a b e do mesmo tipo</td></tr>
+      <tr><td style="font-family:var(--font-code);font-weight:700;border-bottom:1px solid var(--line-light);padding:12px 14px;">!==</td><td style="border-bottom:1px solid var(--line-light);padding:12px 14px;">Não idêntico</td><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:12px 14px;">a !== b</td><td style="border-bottom:1px solid var(--line-light);padding:12px 14px;">Verdadeiro se a não for igual a b, ou não forem do mesmo tipo</td></tr>
+      <tr><td style="font-family:var(--font-code);font-weight:700;border-bottom:1px solid var(--line-light);padding:12px 14px;">&lt;</td><td style="border-bottom:1px solid var(--line-light);padding:12px 14px;">Menor que</td><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:12px 14px;">a &lt; b</td><td style="border-bottom:1px solid var(--line-light);padding:12px 14px;">Verdadeiro se a for menor que b</td></tr>
+      <tr><td style="font-family:var(--font-code);font-weight:700;border-bottom:1px solid var(--line-light);padding:12px 14px;">&gt;</td><td style="border-bottom:1px solid var(--line-light);padding:12px 14px;">Maior que</td><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:12px 14px;">a &gt; b</td><td style="border-bottom:1px solid var(--line-light);padding:12px 14px;">Verdadeiro se a for maior que b</td></tr>
+      <tr><td style="font-family:var(--font-code);font-weight:700;border-bottom:1px solid var(--line-light);padding:12px 14px;">&lt;=</td><td style="border-bottom:1px solid var(--line-light);padding:12px 14px;">Menor ou igual</td><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:12px 14px;">a &lt;= b</td><td style="border-bottom:1px solid var(--line-light);padding:12px 14px;">Verdadeiro se a for menor ou igual a b</td></tr>
+      <tr><td style="font-family:var(--font-code);font-weight:700;padding:12px 14px;">&gt;=</td><td style="padding:12px 14px;">Maior ou igual</td><td style="font-family:var(--font-code);padding:12px 14px;">a &gt;= b</td><td style="padding:12px 14px;">Verdadeiro se a for maior ou igual a b</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="slide" data-label="Operadores Lógicos" style="background:var(--bg-light);color:var(--ink-black);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">04 — OPERADORES</div>
+  <h2 style="font-size:6.4em;font-weight:900;margin:0 0 64px;letter-spacing:-0.06em;">Operadores lógicos</h2>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:32px 60px;flex:1;align-content:center;">
+    <div style="border-top:3px solid var(--accent);padding-top:24px;display:flex;align-items:baseline;gap:28px;"><div style="font-family:var(--font-code);font-size:60px;font-weight:700;color:var(--ink-black);min-width:120px;">&amp;&amp;</div><div style="font-size:28px;color:var(--ink-black-dim);">E, AND</div></div>
+    <div style="border-top:3px solid var(--accent);padding-top:24px;display:flex;align-items:baseline;gap:28px;"><div style="font-family:var(--font-code);font-size:60px;font-weight:700;color:var(--ink-black);min-width:120px;">||</div><div style="font-size:28px;color:var(--ink-black-dim);">OU, OR</div></div>
+    <div style="border-top:3px solid var(--accent);padding-top:24px;display:flex;align-items:baseline;gap:28px;"><div style="font-family:var(--font-code);font-size:60px;font-weight:700;color:var(--ink-black);min-width:120px;">!</div><div style="font-size:28px;color:var(--ink-black-dim);">Negação</div></div>
+    <div style="border-top:3px solid var(--accent);padding-top:24px;display:flex;align-items:baseline;gap:28px;"><div style="font-family:var(--font-code);font-size:60px;font-weight:700;color:var(--ink-black);min-width:120px;">!!</div><div style="font-size:28px;color:var(--ink-black-dim);">Dupla negação</div></div>
+  </div>
+</section>
+
+<section class="slide" data-label="Alterando um Conteúdo" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">05 — MANIPULANDO O DOM</div>
+  <h2 style="font-size:6.4em;font-weight:900;margin:0 0 20px;letter-spacing:-0.06em;">Alterando um conteúdo</h2>
+  <div style="font-size:var(--type-subtitle);color:var(--ink-dim);margin-bottom:44px;">Atributo global ID</div>
+  <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:48px 56px;max-width:1400px;">
+    <pre style="margin:0;font-size:27px;line-height:1.85;color:var(--ink);"><code>&lt;p id="paragrafo"&gt;Olá!&lt;/p&gt;
+
+&lt;script&gt;
+  function mFuncao() {
+    var x = document.getElementById("paragrafo");
+    x.innerHTML = "Hello!";
+  }
+&lt;/script&gt;
+
+&lt;button type="button" onclick="mFuncao()"&gt;Translate&lt;/button&gt;</code></pre>
+  </div>
+</section>
+
+<section class="slide" data-label="Estruturas de Decisão" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">06 — ESTRUTURAS DE DECISÃO</div>
+  <h2 style="font-size:6em;font-weight:900;margin:0 0 56px;letter-spacing:-0.06em;">Estruturas de decisão</h2>
+  <div style="display:grid;grid-template-columns:1.1fr 0.9fr;gap:80px;flex:1;align-items:center;">
+    <p style="font-size:24px;line-height:1.55;margin:0;color:var(--ink-dim);max-width:900px;">A principal estrutura de decisão em programação é o comando <code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">IF</code> (SE), de sintaxe simples: ele verifica o resultado do “teste lógico” e, se for verdadeiro, executa os comandos entre chaves <code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">{ }</code>. Caso contrário, os comandos são ignorados e o programa segue para a próxima instrução.</p>
+    <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:44px 52px;">
+      <pre style="margin:0;font-size:26px;line-height:1.85;color:var(--ink);"><code>if (teste_lógico) {
+  <span style="opacity:0.55;">// comandos executados
+  // se o teste for verdadeiro</span>
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="O que é Teste Lógico" style="background:var(--bg-light);color:var(--ink-black);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">06 — ESTRUTURAS DE DECISÃO</div>
+  <h2 style="font-size:5.6em;font-weight:900;margin:0 0 32px;letter-spacing:-0.05em;">O que é teste lógico?</h2>
+  <p style="font-size:24px;line-height:1.5;margin:0 0 40px;color:var(--ink-black-dim);max-width:1600px;">O comando IF necessita de uma expressão que retorne “verdadeiro (true)” ou “falso (false)”. Basicamente é uma comparação que usa os operadores lógicos a seguir:</p>
+  <table style="width:100%;border-collapse:collapse;table-layout:fixed;font-size:22px;">
+    <colgroup><col style="width:20%;"><col style="width:30%;"><col style="width:50%;"></colgroup>
+    <thead><tr>
+      <th style="text-align:left;font-family:var(--font-mono);font-size:15px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;border-bottom:2px solid var(--accent);padding:10px 14px;">Operador</th>
+      <th style="text-align:left;font-family:var(--font-mono);font-size:15px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;border-bottom:2px solid var(--accent);padding:10px 14px;">Nome</th>
+      <th style="text-align:left;font-family:var(--font-mono);font-size:15px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;border-bottom:2px solid var(--accent);padding:10px 14px;">Exemplo</th>
+    </tr></thead>
+    <tbody>
+      <tr><td style="font-family:var(--font-code);font-weight:700;border-bottom:1px solid var(--line-light);padding:14px;">&gt;</td><td style="border-bottom:1px solid var(--line-light);padding:14px;">Maior</td><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:14px;">10 &gt; 5</td></tr>
+      <tr><td style="font-family:var(--font-code);font-weight:700;border-bottom:1px solid var(--line-light);padding:14px;">&lt;</td><td style="border-bottom:1px solid var(--line-light);padding:14px;">Menor</td><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:14px;">5 &lt; 10</td></tr>
+      <tr><td style="font-family:var(--font-code);font-weight:700;border-bottom:1px solid var(--line-light);padding:14px;">&gt;=</td><td style="border-bottom:1px solid var(--line-light);padding:14px;">Maior ou igual</td><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:14px;">10 &gt;= 10</td></tr>
+      <tr><td style="font-family:var(--font-code);font-weight:700;border-bottom:1px solid var(--line-light);padding:14px;">&lt;=</td><td style="border-bottom:1px solid var(--line-light);padding:14px;">Menor ou igual</td><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:14px;">10 &lt;= 10</td></tr>
+      <tr><td style="font-family:var(--font-code);font-weight:700;border-bottom:1px solid var(--line-light);padding:14px;">!=</td><td style="border-bottom:1px solid var(--line-light);padding:14px;">Diferente</td><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:14px;">1 != 2</td></tr>
+      <tr><td style="font-family:var(--font-code);font-weight:700;padding:14px;">==</td><td style="padding:14px;">Igualdade</td><td style="font-family:var(--font-code);padding:14px;">1 == 1</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="slide" data-label="Testes Lógicos" style="background:var(--bg-light);color:var(--ink-black);font-family:var(--font-sans);display:flex;flex-direction:column;padding:32px var(--pad-x) 32px;">
+  <div style="font-family:var(--font-mono);font-size:18px;color:var(--accent);letter-spacing:0.08em;margin-bottom:8px;">06 — ESTRUTURAS DE DECISÃO</div>
+  <h2 style="font-size:5.6em;font-weight:900;margin:0 0 28px;letter-spacing:-0.05em;">Testes lógicos</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;flex:1;">
+    <table style="width:100%;height:fit-content;border-collapse:collapse;font-size:19px;">
+      <thead><tr>
+        <th style="text-align:left;font-family:var(--font-code);font-weight:700;border-bottom:2px solid var(--accent);padding:8px 12px;">Teste</th>
+        <th style="text-align:left;font-family:var(--font-mono);font-size:14px;text-transform:uppercase;border-bottom:2px solid var(--accent);padding:8px 12px;">Retorno</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:9px 12px;">10 &gt; 5</td><td style="border-bottom:1px solid var(--line-light);padding:9px 12px;">True</td></tr>
+        <tr><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:9px 12px;">5 &gt; 10</td><td style="border-bottom:1px solid var(--line-light);padding:9px 12px;">False</td></tr>
+        <tr><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:9px 12px;">10 &lt; 5</td><td style="border-bottom:1px solid var(--line-light);padding:9px 12px;">False</td></tr>
+        <tr><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:9px 12px;">5 &lt; 10</td><td style="border-bottom:1px solid var(--line-light);padding:9px 12px;">True</td></tr>
+        <tr><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:9px 12px;">10 &gt;= 10</td><td style="border-bottom:1px solid var(--line-light);padding:9px 12px;">True</td></tr>
+        <tr><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:9px 12px;">10 &gt;= 5</td><td style="border-bottom:1px solid var(--line-light);padding:9px 12px;">True</td></tr>
+        <tr><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:9px 12px;">5 &gt;= 10</td><td style="border-bottom:1px solid var(--line-light);padding:9px 12px;">False</td></tr>
+        <tr><td style="font-family:var(--font-code);padding:9px 12px;">10 &lt;= 10</td><td style="padding:9px 12px;">True</td></tr>
+      </tbody>
+    </table>
+    <table style="width:100%;height:fit-content;border-collapse:collapse;font-size:19px;">
+      <thead><tr>
+        <th style="text-align:left;font-family:var(--font-code);font-weight:700;border-bottom:2px solid var(--accent);padding:8px 12px;">Teste</th>
+        <th style="text-align:left;font-family:var(--font-mono);font-size:14px;text-transform:uppercase;border-bottom:2px solid var(--accent);padding:8px 12px;">Retorno</th>
+      </tr></thead>
+      <tbody>
+        <tr><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:9px 12px;">10 &lt;= 5</td><td style="border-bottom:1px solid var(--line-light);padding:9px 12px;">False</td></tr>
+        <tr><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:9px 12px;">5 &lt;= 10</td><td style="border-bottom:1px solid var(--line-light);padding:9px 12px;">True</td></tr>
+        <tr><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:9px 12px;">10 != 10</td><td style="border-bottom:1px solid var(--line-light);padding:9px 12px;">False</td></tr>
+        <tr><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:9px 12px;">10 != 5</td><td style="border-bottom:1px solid var(--line-light);padding:9px 12px;">True</td></tr>
+        <tr><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:9px 12px;">10 == 10</td><td style="border-bottom:1px solid var(--line-light);padding:9px 12px;">True</td></tr>
+        <tr><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:9px 12px;">10 == 5</td><td style="border-bottom:1px solid var(--line-light);padding:9px 12px;">False</td></tr>
+        <tr><td style="font-family:var(--font-code);border-bottom:1px solid var(--line-light);padding:9px 12px;">0</td><td style="border-bottom:1px solid var(--line-light);padding:9px 12px;">False</td></tr>
+        <tr><td style="font-family:var(--font-code);padding:9px 12px;">1</td><td style="padding:9px 12px;">True</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="slide" data-label="Exemplo IF" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;justify-content:center;padding:0 var(--pad-x);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">06 — ESTRUTURAS DE DECISÃO</div>
+  <h2 style="font-size:6em;font-weight:900;margin:0 0 56px;letter-spacing:-0.06em;">Exemplo de estrutura de decisão (IF)</h2>
+  <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:48px 56px;max-width:1200px;">
+    <pre style="margin:0;font-size:26px;line-height:1.85;color:var(--ink);"><code>&lt;!doctype html&gt;
+&lt;html lang="pt-br"&gt;
+&lt;head&gt;
+  &lt;title&gt;Curso de Javascript&lt;/title&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;script&gt;
+    var vidas = 3;
+    if (vidas &gt; 0) {
+      document.write("Jogador vivo");
+    }
+  &lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+  </div>
+</section>
+
+<section class="slide" data-label="If Else" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">06 — ESTRUTURAS DE DECISÃO</div>
+  <h2 style="font-size:7em;font-weight:900;margin:0 0 48px;letter-spacing:-0.07em;">If Else</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;flex:1;align-items:center;">
+    <div style="display:flex;flex-direction:column;gap:18px;">
+      <p style="font-size:24px;line-height:1.5;margin:0;color:var(--ink-dim);">Podemos incrementar o comando <code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">IF</code> com o uso do <code style="background:var(--bg-alt);padding:2px 10px;border-radius:6px;">ELSE</code>, entendido como “caso contrário / se não”.</p>
+      <p style="font-size:24px;line-height:1.5;margin:0;color:var(--ink-dim);">Os comandos do IF só são executados quando o teste é verdadeiro. E se o valor do teste for falso? Aí entra o ELSE: seus comandos são executados sempre que o teste tiver resultado falso.</p>
+    </div>
+    <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:44px 52px;">
+      <pre style="margin:0;font-size:26px;line-height:1.85;color:var(--ink);"><code>if (teste_lógico) {
+  <span style="opacity:0.55;">// se verdadeiro</span>
+} else {
+  <span style="opacity:0.55;">// se falso</span>
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Exemplo de If Else" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;justify-content:center;padding:0 var(--pad-x);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">06 — ESTRUTURAS DE DECISÃO</div>
+  <h2 style="font-size:6.4em;font-weight:900;margin:0 0 64px;letter-spacing:-0.06em;">Exemplo de If Else</h2>
+  <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:52px 60px;max-width:1200px;">
+    <pre style="margin:0;font-size:30px;line-height:1.85;color:var(--ink);"><code>&lt;script&gt;
+  var vidas = 3;
+  if (vidas &gt; 0) {
+    document.write("Jogador vivo");
+  } else {
+    document.write("Jogador morto");
+  }
+&lt;/script&gt;</code></pre>
+  </div>
+</section>
+
+<section class="slide" data-label="Vamos Codar — Média" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;justify-content:center;padding:0 var(--pad-x);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">07 — VAMOS CODAR</div>
+  <div style="border-left:4px solid var(--accent);padding-left:56px;max-width:1560px;">
+    <div style="font-size:var(--type-h2);font-weight:900;line-height:1.25;letter-spacing:-0.02em;">Crie um script para imprimir a média de 3 notas e dizer se o aluno está aprovado ou não.</div>
+    <div style="font-size:var(--type-subtitle);color:var(--accent);font-weight:700;margin-top:32px;">A média para aprovação é 6.</div>
+  </div>
+</section>
+
+<section class="slide" data-label="Vamos Codar — Média — Resolução" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">07 — VAMOS CODAR (RESOLUÇÃO)</div>
+  <h2 style="font-size:5em;font-weight:900;margin:0 0 40px;letter-spacing:-0.05em;">Média de 3 notas — aprovação a partir de 6</h2>
+  <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:44px 52px;max-width:1500px;">
+    <pre style="margin:0;font-size:25px;line-height:1.85;color:var(--ink);"><code>let nota_1 = 7;
+let nota_2 = 6;
+let nota_3 = 3;
+
+let nota_final = (nota_1 + nota_2 + nota_3) / 3;
+
+<span style="opacity:0.55;">// document.writeln(nota_final)</span>
+
+if (nota_final &gt;= 6) {
+  document.writeln("Aluno aprovado com nota: " + nota_final);
+} else {
+  document.writeln("Aluno reprovado com nota: " + nota_final);
+}
+
+<span style="opacity:0.55;">// Math.round(nota_final)</span></code></pre>
+  </div>
+</section>
+
+<section class="slide" data-label="Vamos Codar — Dias da Semana" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;justify-content:center;padding:0 var(--pad-x);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">07 — VAMOS CODAR</div>
+  <div style="border-left:4px solid var(--accent);padding-left:56px;max-width:1560px;">
+    <div style="font-size:var(--type-h2);font-weight:900;line-height:1.25;letter-spacing:-0.02em;">Crie um novo script que leia um número de 1 a 7 e imprima o dia da semana correspondente.</div>
+    <div style="font-size:var(--type-subtitle);color:var(--accent);font-weight:700;margin-top:32px;">1 = domingo e 7 = sábado.</div>
+  </div>
+</section>
+
+<section class="slide" data-label="Vamos Codar — Dias da Semana — Resolução" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">07 — VAMOS CODAR (RESOLUÇÃO)</div>
+  <h2 style="font-size:4.6em;font-weight:900;margin:0 0 40px;letter-spacing:-0.04em;">Dias da semana com switch</h2>
+  <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:44px 52px;max-width:1400px;">
+    <pre style="margin:0;font-size:24px;line-height:1.75;color:var(--ink);"><code>let numero = 2;
+
+switch (numero) {
+  case 1: document.writeln('Domingo'); break;
+  case 2: document.writeln('Segunda-feira'); break;
+  case 3: document.writeln('Terça-feira'); break;
+  case 4: document.writeln('Quarta-feira'); break;
+  case 5: document.writeln('Quinta-feira'); break;
+  case 6: document.writeln('Sexta-feira'); break;
+  case 7: document.writeln('Sábado'); break;
+  default: document.writeln('O número está fora do intervalo.');
+}</code></pre>
+  </div>
+</section>
+
+<section class="slide" data-label="Vamos Codar — Par ou Ímpar" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;justify-content:center;padding:0 var(--pad-x);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">07 — VAMOS CODAR</div>
+  <div style="border-left:4px solid var(--accent);padding-left:56px;max-width:1560px;">
+    <div style="font-size:var(--type-h2);font-weight:900;line-height:1.25;letter-spacing:-0.02em;">Testar se o número é par ou ímpar.</div>
+  </div>
+</section>
+
+<section class="slide" data-label="Vamos Codar — Par ou Ímpar — Resolução" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;justify-content:center;padding:0 var(--pad-x);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">07 — VAMOS CODAR (RESOLUÇÃO)</div>
+  <h2 style="font-size:5.6em;font-weight:900;margin:0 0 56px;letter-spacing:-0.05em;">Par ou ímpar</h2>
+  <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:48px 56px;max-width:1200px;">
+    <pre style="margin:0;font-size:28px;line-height:1.85;color:var(--ink);"><code>let numero = 4;
+
+if (numero % 2 === 0) {
+  document.writeln('O número é par');
+} else {
+  document.writeln('O número é ímpar');
+}</code></pre>
+  </div>
+</section>
+
+<section class="slide" data-label="Vamos Codar — IMC" style="background:var(--bg-light);color:var(--ink-black);font-family:var(--font-sans);display:flex;flex-direction:column;padding:32px var(--pad-x) 32px;">
+  <div style="font-family:var(--font-mono);font-size:18px;color:var(--accent);letter-spacing:0.08em;margin-bottom:8px;">07 — VAMOS CODAR</div>
+  <h2 style="font-size:5em;font-weight:900;margin:0 0 20px;letter-spacing:-0.04em;">Crie um algoritmo que calcule o IMC</h2>
+  <p style="font-size:22px;line-height:1.4;margin:0 0 24px;color:var(--ink-black-dim);max-width:1600px;">Para obter o IMC, basta dividir o peso (em quilos) pela altura (em metros) elevada ao quadrado (<code style="font-family:var(--font-code);">altura x altura</code>).</p>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px 32px;flex:1;align-content:start;">
+    <div style="border-top:3px solid var(--accent);padding-top:14px;"><div style="font-family:var(--font-mono);font-size:15px;color:var(--ink-black-dim);">MAGREZA GRAVE</div><div style="font-size:22px;font-weight:700;">menor que 16</div></div>
+    <div style="border-top:3px solid var(--accent);padding-top:14px;"><div style="font-family:var(--font-mono);font-size:15px;color:var(--ink-black-dim);">MAGREZA MODERADA</div><div style="font-size:22px;font-weight:700;">16 a 16,9</div></div>
+    <div style="border-top:3px solid var(--accent);padding-top:14px;"><div style="font-family:var(--font-mono);font-size:15px;color:var(--ink-black-dim);">MAGREZA LEVE</div><div style="font-size:22px;font-weight:700;">17 a 18,4</div></div>
+    <div style="border-top:3px solid var(--accent);padding-top:14px;"><div style="font-family:var(--font-mono);font-size:15px;color:var(--ink-black-dim);">SAUDÁVEL</div><div style="font-size:22px;font-weight:700;">18,5 a 24,9</div></div>
+    <div style="border-top:3px solid var(--accent);padding-top:14px;"><div style="font-family:var(--font-mono);font-size:15px;color:var(--ink-black-dim);">SOBREPESO</div><div style="font-size:22px;font-weight:700;">25 a 29,9</div></div>
+    <div style="border-top:3px solid var(--accent);padding-top:14px;"><div style="font-family:var(--font-mono);font-size:15px;color:var(--ink-black-dim);">OBESIDADE GRAU 1</div><div style="font-size:22px;font-weight:700;">30 a 34,9</div></div>
+    <div style="border-top:3px solid var(--accent);padding-top:14px;"><div style="font-family:var(--font-mono);font-size:15px;color:var(--ink-black-dim);">OBESIDADE SEVERA</div><div style="font-size:22px;font-weight:700;">35 a 39,9</div></div>
+    <div style="border-top:3px solid var(--accent);padding-top:14px;"><div style="font-family:var(--font-mono);font-size:15px;color:var(--ink-black-dim);">OBESIDADE MÓRBIDA</div><div style="font-size:22px;font-weight:700;">acima de 40</div></div>
+  </div>
+</section>
+
+<section class="slide" data-label="Alterando um Atributo" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;padding:var(--pad-top) var(--pad-x) var(--pad-bottom);">
+  <div style="font-family:var(--font-mono);font-size:var(--type-kicker);color:var(--accent);letter-spacing:0.08em;margin-bottom:var(--gap-title);">08 — EVENTOS</div>
+  <h2 style="font-size:6.4em;font-weight:900;margin:0 0 48px;letter-spacing:-0.06em;">Alterando um atributo</h2>
+  <div style="display:grid;grid-template-columns:1.3fr 0.7fr;gap:80px;flex:1;align-items:center;">
+    <div style="background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;padding:40px 48px;">
+      <pre style="margin:0;font-size:20px;line-height:1.75;color:var(--ink);"><code>&lt;script&gt;
+  function trocaImagem() {
+    let elemento = document.getElementById("myImage");
+
+    if (elemento.src.match("bulbon")) {
+      elemento.src = "img/pic_bulboff.gif";
+    } else {
+      elemento.src = "img/pic_bulbon.gif";
+    }
+  }
+&lt;/script&gt;
+
+&lt;p&gt;
+  &lt;img id="myImage" onclick="trocaImagem()"
+    src="img/pic_bulboff.gif" width="100" height="180"&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Clique na lâmpada para ligar/desligar a luz&lt;/p&gt;</code></pre>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:24px;">
+      <svg viewBox="0 0 140 200" width="150" height="210" aria-hidden="true">
+        <circle cx="70" cy="70" r="52" fill="none" stroke="var(--accent)" stroke-width="4"></circle>
+        <path d="M50 110 h40 l-8 30 h-24 z" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linejoin="round"></path>
+        <line x1="55" y1="150" x2="85" y2="150" stroke="var(--accent)" stroke-width="4"></line>
+        <line x1="58" y1="160" x2="82" y2="160" stroke="var(--accent)" stroke-width="4"></line>
+        <path d="M70 30 v20 M40 45 l14 14 M100 45 l-14 14" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" opacity="0.6"></path>
+      </svg>
+      <div style="font-family:var(--font-mono);font-size:18px;color:var(--ink-dim);text-align:center;">clique para ligar / desligar</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-label="Obrigado" style="background:var(--bg);color:var(--ink);font-family:var(--font-sans);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 var(--pad-x);text-align:center;position:relative;overflow:hidden;">
+  <svg viewBox="0 0 1920 1080" width="1920" height="1080" style="position:absolute;top:0;left:0;opacity:0.06;" aria-hidden="true">
+    <g stroke="var(--ink)" stroke-width="2" fill="none">
+      <path d="M100 150 L260 150 L260 210 L420 210"></path>
+      <path d="M1500 120 L1660 120 L1660 190 L1820 190"></path>
+      <path d="M200 800 L360 800 L360 860 L520 860"></path>
+      <path d="M1400 850 L1560 850 L1560 900 L1720 900"></path>
+      <circle cx="260" cy="150" r="5" fill="var(--accent)" stroke="none"></circle>
+      <circle cx="420" cy="210" r="5" fill="var(--accent)" stroke="none"></circle>
+      <circle cx="1660" cy="120" r="5" fill="var(--accent)" stroke="none"></circle>
+      <circle cx="1820" cy="190" r="5" fill="var(--accent)" stroke="none"></circle>
+      <circle cx="360" cy="800" r="5" fill="var(--accent)" stroke="none"></circle>
+      <circle cx="520" cy="860" r="5" fill="var(--accent)" stroke="none"></circle>
+      <circle cx="1560" cy="850" r="5" fill="var(--accent)" stroke="none"></circle>
+      <circle cx="1720" cy="900" r="5" fill="var(--accent)" stroke="none"></circle>
+    </g>
+  </svg>
+  <div style="position:relative;">
+    <h1 style="font-size:7em;font-weight:900;margin:0;letter-spacing:-0.07em;">Obrigado.</h1>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:56px;font-size:var(--type-small);color:var(--ink-dim);">
+      <div><span style="font-family:var(--font-mono);color:var(--accent);letter-spacing:0.04em;">IMAGENS —</span> pexels.com</div>
+      <div><span style="font-family:var(--font-mono);color:var(--accent);letter-spacing:0.04em;">CONTEÚDO —</span> ermesonsilva</div>
+      <div><span style="font-family:var(--font-mono);color:var(--accent);letter-spacing:0.04em;">CONTATO —</span> ermeson.silva@fapce.edu.br</div>
+    </div>
+  </div>
+</section>
+
+</div>
+</div>
+<script>
+(function () {
+  "use strict";
+  var stage = document.getElementById('stage');
+  var deck = document.getElementById('deck');
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var dotsEl = document.getElementById('nav-dots');
+  var counter = document.getElementById('slide-counter');
+  var total = slides.length;
+  var current = 0;
+
+  function fitStage() {
+    var scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    stage.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
+  }
+
+  function buildDots() {
+    slides.forEach(function (_, i) {
+      var btn = document.createElement('button');
+      btn.className = 'nav-dot';
+      btn.setAttribute('aria-label', 'Ir para o slide ' + (i + 1));
+      btn.addEventListener('click', function () { goTo(i); });
+      dotsEl.appendChild(btn);
+    });
+  }
+
+  function goTo(index) {
+    index = Math.max(0, Math.min(total - 1, index));
+    current = index;
+    deck.style.transform = 'translateX(-' + (index * 1920) + 'px)';
+    Array.prototype.forEach.call(dotsEl.children, function (dot, i) {
+      dot.classList.toggle('is-active', i === current);
+    });
+    counter.textContent = (current + 1) + ' / ' + total;
+    updateRailActive();
+  }
+
+  function isControlTarget(el) {
+    return !!(el && el.closest && (el.closest('#thumb-rail') || el.closest('#deck-extra-controls')));
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault();
+      goTo(current + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      goTo(current - 1);
+    } else if (e.key === 'Home') {
+      goTo(0);
+    } else if (e.key === 'End') {
+      goTo(total - 1);
+    } else if (e.key === 'f' || e.key === 'F') {
+      toggleFsBtn.click();
+    } else if (e.key === 't' || e.key === 'T') {
+      toggleRailBtn.click();
+    }
+  });
+
+  var wheelCooldown = false;
+  document.addEventListener('wheel', function (e) {
+    if (isControlTarget(e.target)) return;
+    e.preventDefault();
+    if (wheelCooldown) return;
+    wheelCooldown = true;
+    setTimeout(function () { wheelCooldown = false; }, 700);
+    if (e.deltaY > 0 || e.deltaX > 0) goTo(current + 1); else goTo(current - 1);
+  }, { passive: false });
+
+  var touchStartX = null, touchStartY = null;
+  document.addEventListener('touchstart', function (e) {
+    if (isControlTarget(e.target)) { touchStartX = null; return; }
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (touchStartX === null) return;
+    var dx = touchStartX - e.changedTouches[0].clientX;
+    var dy = touchStartY - e.changedTouches[0].clientY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+      if (dx > 0) goTo(current + 1); else goTo(current - 1);
+    }
+    touchStartX = null;
+    touchStartY = null;
+  }, { passive: true });
+
+  window.addEventListener('resize', fitStage);
+
+  /* ── Miniaturas (thumbnails rail) ─────────────────────────────── */
+  var railEl = document.getElementById('thumb-rail');
+  var railInner = document.getElementById('thumb-rail-inner');
+  var toggleRailBtn = document.getElementById('deck-toggle-rail');
+  var thumbItems = [];
+
+  function buildRail() {
+    slides.forEach(function (slide, i) {
+      var item = document.createElement('div');
+      item.className = 'thumb-item';
+
+      var frame = document.createElement('div');
+      frame.className = 'thumb-frame';
+
+      var clone = slide.cloneNode(true);
+      clone.classList.add('slide-clone');
+      frame.appendChild(clone);
+
+      var label = document.createElement('div');
+      label.className = 'thumb-label';
+      label.textContent = (i + 1) + '. ' + (slide.getAttribute('data-label') || '');
+
+      item.appendChild(frame);
+      item.appendChild(label);
+      item.addEventListener('click', function () { goTo(i); });
+
+      railInner.appendChild(item);
+      thumbItems.push({ el: item, frame: frame, clone: clone });
+    });
+
+    requestAnimationFrame(function () {
+      thumbItems.forEach(function (t) {
+        var scale = t.frame.clientWidth / 1920;
+        t.clone.style.transform = 'scale(' + scale + ')';
+      });
+    });
+  }
+
+  function updateRailActive() {
+    thumbItems.forEach(function (t, i) {
+      var active = i === current;
+      t.el.classList.toggle('is-active', active);
+      if (active) {
+        t.el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    });
+  }
+
+  function setRailOpen(open) {
+    railEl.setAttribute('data-hidden', open ? 'false' : 'true');
+    toggleRailBtn.setAttribute('aria-pressed', open ? 'true' : 'false');
+    toggleRailBtn.setAttribute('aria-label', open ? 'Ocultar miniaturas' : 'Mostrar miniaturas');
+  }
+
+  toggleRailBtn.addEventListener('click', function () {
+    setRailOpen(railEl.getAttribute('data-hidden') === 'true');
+  });
+
+  /* ── Tela cheia ────────────────────────────────────────────────── */
+  var toggleFsBtn = document.getElementById('deck-toggle-fullscreen');
+
+  function isFullscreen() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+  }
+
+  function syncFsButton() {
+    var on = isFullscreen();
+    toggleFsBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    toggleFsBtn.setAttribute('aria-label', on ? 'Sair da tela cheia' : 'Tela cheia');
+  }
+
+  toggleFsBtn.addEventListener('click', function () {
+    if (isFullscreen()) {
+      (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    } else {
+      var el = document.documentElement;
+      (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+    }
+  });
+
+  document.addEventListener('fullscreenchange', syncFsButton);
+  document.addEventListener('webkitfullscreenchange', syncFsButton);
+
+  buildDots();
+  buildRail();
+  setRailOpen(true);
+  fitStage();
+  goTo(0);
+})();
+</script>
+</body>
+</html>
