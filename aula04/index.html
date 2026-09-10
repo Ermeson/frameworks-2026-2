@@ -880,7 +880,235 @@ element.remove();</code></pre>
       </div>
     </section>
 
-    <section id="slide-15" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-[#121214] text-white">
+    <section id="slide-15" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
+      <div class="z-10 mb-4 w-full">
+        <div class="z-10 flex items-center justify-between w-full">
+        <div class="flex items-center gap-3">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#ffee8c]"></span>
+          <span class="text-sm font-bold tracking-widest uppercase text-zinc-700">EVENTOS • DESAFIO</span>
+        </div>
+
+      </div>
+        <div class="flex items-center gap-4 mt-4">
+          <span class="inline-block text-sm font-bold tracking-widest uppercase px-3 py-1.5 rounded-full bg-zinc-950 text-[#ffee8c]">Desafio</span>
+        </div>
+        <h2 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.04em] mt-4 text-zinc-950">
+          Bagunça na Tela
+        </h2>
+      </div>
+
+      <div class="my-auto z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start w-full py-4">
+        <div class="lg:col-span-5 space-y-5">
+          <p class="text-xl sm:text-2xl leading-relaxed tracking-[-0.01em] text-zinc-600">Crie uma página HTML com dois botões:</p>
+          <ul class="space-y-3 text-lg sm:text-xl text-zinc-700">
+            <li class="flex items-start gap-3">
+              <span class="mt-1.5 w-2 h-2 rounded-full bg-[#ffee8c] shrink-0"></span>
+              <span><span class="font-bold text-zinc-950">Bagunçar</span> — cria uma bolinha colorida em uma posição aleatória da tela</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1.5 w-2 h-2 rounded-full bg-[#ffee8c] shrink-0"></span>
+              <span><span class="font-bold text-zinc-950">Limpar</span> — remove todas as bolinhas</span>
+            </li>
+          </ul>
+          <div class="rounded-xl border border-zinc-200 bg-zinc-50 px-5 py-4 text-sm sm:text-base text-zinc-600">
+            <span class="font-bold text-zinc-950">Dica:</span> se travar, abra o console do navegador (F12) — ele mostra o erro e a linha exata do problema.
+          </div>
+        </div>
+
+        <div class="lg:col-span-7">
+          <div class="rounded-3xl border-2 border-dashed border-amber-400/50 bg-amber-50/40 px-6 py-8 sm:px-10 sm:py-10">
+            <span class="text-sm font-bold tracking-widest uppercase text-zinc-500 mb-4 block">Requisitos</span>
+            <ul class="space-y-4 text-lg sm:text-xl text-zinc-800">
+              <li class="flex items-start gap-3">
+                <span class="font-mono font-bold text-zinc-950">1.</span>
+                <span>Cada clique em "Bagunçar" deve criar um novo elemento na página (use <code class="font-mono text-base sm:text-lg text-zinc-950">createElement</code> e <code class="font-mono text-base sm:text-lg text-zinc-950">appendChild</code>).</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="font-mono font-bold text-zinc-950">2.</span>
+                <span>A cor da bolinha deve ser escolhida aleatoriamente entre pelo menos 4 cores.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="font-mono font-bold text-zinc-950">3.</span>
+                <span>A posição da bolinha (topo e esquerda) deve ser aleatória na tela.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="font-mono font-bold text-zinc-950">4.</span>
+                <span>O botão "Limpar" deve remover todas as bolinhas criadas.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="z-10 pt-6 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-4 text-sm font-medium text-zinc-500">
+        <div class="flex items-center gap-3">
+          <span class="font-semibold text-base text-zinc-900">Frameworks</span>
+        </div>
+        <span class="tracking-wider font-mono">2026.2</span>
+      </div>
+    </section>
+
+    <section id="slide-16" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
+      <div class="z-10 mb-4 w-full">
+        <div class="z-10 flex items-center justify-between w-full">
+        <div class="flex items-center gap-3">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#ffee8c]"></span>
+          <span class="text-sm font-bold tracking-widest uppercase text-zinc-700">DESAFIO • HTML</span>
+        </div>
+
+      </div>
+        <h2 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.04em] mt-4 mb-2 text-zinc-950">
+          Resolvendo o desafio
+        </h2>
+        <p class="text-lg sm:text-2xl font-normal tracking-[-0.01em] text-zinc-600 mt-2">Estrutura HTML: título e os dois botões da página</p>
+      </div>
+
+      <div class="my-auto z-10 w-full py-2 space-y-4">
+<div class="rounded-2xl border overflow-hidden shadow-sm bg-[#18181b] border-zinc-800 text-zinc-100">
+          <div class="flex items-center justify-between px-5 sm:px-6 py-3 sm:py-4 border-b border-zinc-800 bg-[#121214]/90">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#ffee8c]"></span>
+              <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-zinc-700"></span>
+              <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-zinc-700"></span>
+              <span class="ml-3 text-base sm:text-lg font-mono font-medium text-zinc-400">bagunca.html</span>
+            </div>
+            <div class="flex items-center gap-2 text-base sm:text-lg font-mono text-zinc-500">
+              <span class="text-[#ffee8c]">&lt;/&gt;</span>
+              <span>HTML</span>
+            </div>
+          </div>
+          <div class="p-5 sm:p-7 overflow-x-auto  font-mono text-lg sm:text-xl md:text-2xl leading-relaxed selection:bg-[#ffee8c] selection:text-zinc-950">
+            <pre class="language-markup !m-0 !p-0 !bg-transparent text-zinc-300 font-mono !whitespace-pre"><code class="language-markup">&lt;h1&gt;Bagunça Colorida&lt;/h1&gt;
+
+&lt;button onclick="criarBola()"&gt;Bagunçar 🌀&lt;/button&gt;
+&lt;button onclick="limpar()"&gt;Limpar 🧹&lt;/button&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="z-10 pt-6 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-4 text-sm font-medium text-zinc-500">
+        <div class="flex items-center gap-3">
+          <span class="font-semibold text-base text-zinc-900">Frameworks</span>
+        </div>
+        <span class="tracking-wider font-mono">2026.2</span>
+      </div>
+    </section>
+
+    <section id="slide-17" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
+      <div class="z-10 mb-4 w-full">
+        <div class="z-10 flex items-center justify-between w-full">
+        <div class="flex items-center gap-3">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#ffee8c]"></span>
+          <span class="text-sm font-bold tracking-widest uppercase text-zinc-700">DESAFIO • CSS</span>
+        </div>
+
+      </div>
+        <h2 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.04em] mt-4 mb-2 text-zinc-950">
+          Resolvendo o desafio
+        </h2>
+        <p class="text-lg sm:text-2xl font-normal tracking-[-0.01em] text-zinc-600 mt-2">CSS: estilo da página, dos botões e das bolinhas</p>
+      </div>
+
+      <div class="my-auto z-10 w-full py-2 space-y-4">
+<div class="rounded-2xl border overflow-hidden shadow-sm bg-[#18181b] border-zinc-800 text-zinc-100">
+          <div class="flex items-center justify-between px-5 sm:px-6 py-3 sm:py-4 border-b border-zinc-800 bg-[#121214]/90">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#ffee8c]"></span>
+              <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-zinc-700"></span>
+              <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-zinc-700"></span>
+              <span class="ml-3 text-base sm:text-lg font-mono font-medium text-zinc-400">bagunca.css</span>
+            </div>
+            <div class="flex items-center gap-2 text-base sm:text-lg font-mono text-zinc-500">
+              <span class="text-[#ffee8c]">&lt;/&gt;</span>
+              <span>CSS</span>
+            </div>
+          </div>
+          <div class="p-5 sm:p-7 overflow-x-auto  font-mono text-base sm:text-lg md:text-xl leading-relaxed selection:bg-[#ffee8c] selection:text-zinc-950">
+            <pre class="language-css !m-0 !p-0 !bg-transparent text-zinc-300 font-mono !whitespace-pre"><code class="language-css">body {
+  font-family: sans-serif;
+  text-align: center;
+  padding-top: 30px;
+}
+button {
+  font-size: 20px;
+  padding: 10px 20px;
+  margin: 5px;
+}
+.bola {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  position: absolute;
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="z-10 pt-6 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-4 text-sm font-medium text-zinc-500">
+        <div class="flex items-center gap-3">
+          <span class="font-semibold text-base text-zinc-900">Frameworks</span>
+        </div>
+        <span class="tracking-wider font-mono">2026.2</span>
+      </div>
+    </section>
+
+    <section id="slide-18" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
+      <div class="z-10 mb-4 w-full">
+        <div class="z-10 flex items-center justify-between w-full">
+        <div class="flex items-center gap-3">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#ffee8c]"></span>
+          <span class="text-sm font-bold tracking-widest uppercase text-zinc-700">DESAFIO • JS</span>
+        </div>
+
+      </div>
+        <h2 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.04em] mt-4 mb-2 text-zinc-950">
+          Resolvendo o desafio
+        </h2>
+        <p class="text-lg sm:text-2xl font-normal tracking-[-0.01em] text-zinc-600 mt-2">JavaScript: criando e removendo as bolinhas dinamicamente</p>
+      </div>
+
+      <div class="my-auto z-10 w-full py-2 space-y-4">
+<div class="rounded-2xl border overflow-hidden shadow-sm bg-[#18181b] border-zinc-800 text-zinc-100">
+          <div class="flex items-center justify-between px-5 sm:px-6 py-3 sm:py-4 border-b border-zinc-800 bg-[#121214]/90">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#ffee8c]"></span>
+              <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-zinc-700"></span>
+              <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-zinc-700"></span>
+              <span class="ml-3 text-base sm:text-lg font-mono font-medium text-zinc-400">bagunca.js</span>
+            </div>
+            <div class="flex items-center gap-2 text-base sm:text-lg font-mono text-zinc-500">
+              <span class="text-[#ffee8c]">&lt;/&gt;</span>
+              <span>JavaScript</span>
+            </div>
+          </div>
+          <div class="p-5 sm:p-7 overflow-x-auto  font-mono text-base sm:text-lg md:text-xl leading-relaxed selection:bg-[#ffee8c] selection:text-zinc-950">
+            <pre class="language-javascript !m-0 !p-0 !bg-transparent text-zinc-300 font-mono !whitespace-pre"><code class="language-javascript">const cores = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'pink'];
+
+function criarBola() {
+  const bola = document.createElement('div');
+  bola.className = 'bola';
+  bola.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+  bola.style.left = Math.random() * window.innerWidth + 'px';
+  bola.style.top = Math.random() * window.innerHeight + 'px';
+  document.body.appendChild(bola);
+}
+
+function limpar() {
+  document.querySelectorAll('.bola').forEach(bola =&gt; bola.remove());
+}</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="z-10 pt-6 border-t border-zinc-200 flex flex-wrap items-center justify-between gap-4 text-sm font-medium text-zinc-500">
+        <div class="flex items-center gap-3">
+          <span class="font-semibold text-base text-zinc-900">Frameworks</span>
+        </div>
+        <span class="tracking-wider font-mono">2026.2</span>
+      </div>
+    </section>
+
+    <section id="slide-19" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-[#121214] text-white">
       <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
           <span class="w-2.5 h-2.5 rounded-full bg-[#ffee8c]"></span>
@@ -909,14 +1137,14 @@ element.remove();</code></pre>
       </div>
     </section>
 
-    <section id="slide-16" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
+    <section id="slide-20" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
       <div class="z-10 mb-4 w-full">
         <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
           <span class="w-2.5 h-2.5 rounded-full bg-[#ffee8c]"></span>
           <span class="text-sm font-bold tracking-widest uppercase text-zinc-700">EVENTOS • LISTENER</span>
         </div>
-        
+
       </div>
         <h2 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-[-0.04em] mt-4 text-zinc-950">
           Capturando um evento com addEventListener
@@ -964,7 +1192,7 @@ button.addEventListener('click', function() {
       </div>
     </section>
 
-    <section id="slide-17" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
+    <section id="slide-21" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
       <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
           <span class="w-2.5 h-2.5 rounded-full bg-[#ffee8c]"></span>
@@ -991,7 +1219,7 @@ button.addEventListener('click', function() {
       </div>
     </section>
 
-    <section id="slide-18" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
+    <section id="slide-22" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
       <div class="z-10 mb-4 w-full">
         <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
@@ -1038,7 +1266,7 @@ button.addEventListener('click', function() {
       </div>
     </section>
 
-    <section id="slide-19" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
+    <section id="slide-23" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
       <div class="z-10 mb-4 w-full">
         <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
@@ -1093,7 +1321,7 @@ button.addEventListener('click', function() {
       </div>
     </section>
 
-    <section id="slide-20" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-[#121214] text-white">
+    <section id="slide-24" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-[#121214] text-white">
       <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
           <span class="w-2.5 h-2.5 rounded-full bg-[#ffee8c]"></span>
@@ -1120,7 +1348,7 @@ button.addEventListener('click', function() {
       </div>
     </section>
 
-    <section id="slide-21" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
+    <section id="slide-25" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
       <div class="z-10 mb-4 w-full">
         <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
@@ -1169,7 +1397,7 @@ const botoes = document.querySelectorAll('.btn')</code></pre>
       </div>
     </section>
 
-    <section id="slide-22" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
+    <section id="slide-26" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
       <div class="z-10 mb-4 w-full">
         <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
@@ -1216,7 +1444,7 @@ const botoes = document.querySelectorAll('.btn')</code></pre>
       </div>
     </section>
 
-    <section id="slide-23" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
+    <section id="slide-27" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
       <div class="z-10 mb-4 w-full">
         <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
@@ -1263,7 +1491,7 @@ const botoes = document.querySelectorAll('.btn')</code></pre>
       </div>
     </section>
 
-    <section id="slide-24" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
+    <section id="slide-28" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
       <div class="z-10 mb-4 w-full">
         <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
@@ -1311,7 +1539,7 @@ const botoes = document.querySelectorAll('.btn')</code></pre>
       </div>
     </section>
 
-    <section id="slide-25" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
+    <section id="slide-29" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
       <div class="z-10 mb-4 w-full">
         <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
@@ -1361,7 +1589,7 @@ const botoes = document.querySelectorAll('.btn')</code></pre>
       </div>
     </section>
 
-    <section id="slide-26" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-[#121214] text-white">
+    <section id="slide-30" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-[#121214] text-white">
       <div class="z-10 mb-4 w-full">
         <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
@@ -1412,7 +1640,7 @@ const botoes = document.querySelectorAll('.btn')</code></pre>
       </div>
     </section>
 
-    <section id="slide-27" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
+    <section id="slide-31" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
       <div class="z-10 mb-4 w-full">
         <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
@@ -1463,7 +1691,7 @@ const botoes = document.querySelectorAll('.btn')</code></pre>
       </div>
     </section>
 
-    <section id="slide-28" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
+    <section id="slide-32" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
       <div class="z-10 mb-4 w-full">
         <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
@@ -1514,7 +1742,7 @@ const botoes = document.querySelectorAll('.btn')</code></pre>
       </div>
     </section>
 
-    <section id="slide-29" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-[#121214] text-white">
+    <section id="slide-33" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-[#121214] text-white">
       <div class="z-10 mb-4 w-full">
         <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
@@ -1562,7 +1790,7 @@ const botoes = document.querySelectorAll('.btn')</code></pre>
       </div>
     </section>
 
-    <section id="slide-30" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
+    <section id="slide-34" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-white text-zinc-950">
       <div class="z-10 mb-4 w-full">
         <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
@@ -1614,7 +1842,7 @@ const botoes = document.querySelectorAll('.btn')</code></pre>
       </div>
     </section>
 
-    <section id="slide-31" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-[#121214] text-white">
+    <section id="slide-35" class="slide-page w-full h-full flex flex-col justify-between px-6 sm:px-12 md:px-20 lg:px-28 xl:px-36 py-8 sm:py-12 md:py-16 bg-[#121214] text-white">
       <div class="z-10 flex items-center justify-between w-full">
         <div class="flex items-center gap-3">
           <span class="w-2.5 h-2.5 rounded-full bg-[#ffee8c]"></span>
@@ -1657,7 +1885,7 @@ const botoes = document.querySelectorAll('.btn')</code></pre>
         </button>
 
         <span id="slide-indicator" class="text-xs sm:text-sm font-semibold font-mono tracking-wider px-2 text-zinc-300">
-          01 <span class="text-zinc-600 font-normal">/</span> 32
+          01 <span class="text-zinc-600 font-normal">/</span> 36
         </span>
 
         <button id="btn-next" onclick="nextSlide()" class="p-2 rounded-full hover:bg-zinc-800 disabled:opacity-30 disabled:hover:bg-transparent transition-colors text-zinc-300 hover:text-white" title="Próximo Slide (→ ou Espaço)">
@@ -1735,6 +1963,10 @@ const botoes = document.querySelectorAll('.btn')</code></pre>
       { title: "Exemplo: alternando cor com classList.toggle()", tagline: "MANIPULAÇÃO • EXEMPLO", type: "code", themeMode: "light" },
       { title: "Criando novos elementos", tagline: "MANIPULAÇÃO • CRIAR", type: "splitcode", themeMode: "light" },
       { title: "Removendo elementos", tagline: "MANIPULAÇÃO • REMOVER", type: "splitcode", themeMode: "light" },
+      { title: "Bagunça na Tela", tagline: "EVENTOS • DESAFIO", type: "exercise", themeMode: "light" },
+      { title: "Resolvendo o desafio", tagline: "DESAFIO • HTML", type: "code", themeMode: "light" },
+      { title: "Resolvendo o desafio", tagline: "DESAFIO • CSS", type: "code", themeMode: "light" },
+      { title: "Resolvendo o desafio", tagline: "DESAFIO • JS", type: "code", themeMode: "light" },
       { title: "Eventos no DOM", tagline: "EVENTOS • CONCEITO", type: "bigtext", themeMode: "dark" },
       { title: "Capturando um evento com addEventListener", tagline: "EVENTOS • LISTENER", type: "splitcode", themeMode: "light" },
       { title: "Crie uma lista dinâmica onde os usuários possam adicionar e remover itens.", tagline: "LET'S CODE • LISTA DINÂMICA", type: "exercise", themeMode: "light" },
