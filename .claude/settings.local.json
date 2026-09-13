@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk 'NR==386{print length\\($0\\)}' index.html)",
+      "Bash(awk 'NR==386{print substr\\($0,1,2000\\)}' index.html)",
+      "Bash(awk 'NR==387{print length\\($0\\)}' index.html)",
+      "Bash(awk 'NR==387{print substr\\($0,1,3000\\)}' index.html)",
+      "Bash(awk 'NR==375{print length\\($0\\)}' index.html)",
+      "Bash(python3 -)"
+    ]
+  }
+}
