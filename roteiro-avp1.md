@@ -295,6 +295,8 @@ button.addEventListener('click', function () {
 
 **Atenção:** Este guia é apenas um resumo e não substitui o estudo dos conteúdos e códigos em sua totalidade.
 
+**Atenção 2:** Este guia foi gerado por um agente de IA. Ele pode cometer erros. No entanto, os tópicos a serem estudados estão corretos.
+
 ---
 
 ```text
