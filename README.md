@@ -104,7 +104,7 @@ O uso de IA é permitido apenas como ferramenta de apoio auxiliar ao desenvolvim
 - [MDN Web Docs](https://developer.mozilla.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Vue.js](https://vuejs.org/)
-- [JavaScript] (<https://www.w3schools.com/js/default.asp>)
+- [JavaScript](<https://www.w3schools.com/js/default.asp>)
 
 ---
 
