@@ -1,22 +1,24 @@
 # Frameworks — 2026.2
 
-Repositório oficial da disciplina **Frameworks**, do curso de Sistemas de Informação (UNIFAP), com o material de aula, projetos e roteiros de estudo utilizados ao longo do semestre.
+Repositório oficial da disciplina **Frameworks**, do curso de Sistemas de Informação e Análise e Desenvolvimento de Sistemas (UNIFAP), com o material de aula, projetos e roteiros de estudo utilizados ao longo do semestre.
 
-🔗 **Site do repositório:** https://ermeson.github.io/frameworks-2026-2/
+🔗 **Site do repositório:** <https://ermeson.github.io/frameworks-2026-2/>
 
 ---
 
 ## Sobre a disciplina
 
-Frameworks estuda as ferramentas que sustentam o desenvolvimento web moderno — da lógica de programação no navegador à construção de interfaces reativas e escaláveis.
+Frameworks estuda as ferramentas que sustentam o desenvolvimento web moderno, da lógica de programação no navegador à construção de interfaces reativas e escaláveis.
 
 **Objetivos:**
+
 - Programar em JavaScript com lógica clara
 - Estilizar interfaces com Tailwind CSS
-- Construir componentes reativos com Vue.js/React
+- Construir componentes reativos com Vue.js
 - Integrar as três tecnologias em um projeto real
 
 **Ementa:**
+
 1. Introdução a linguagens de script para a web (JavaScript)
 2. Processamento do lado do cliente
 3. Variáveis, constantes, vetores, objetos, desvios condicionais e estruturas de repetição
@@ -29,7 +31,7 @@ Frameworks estuda as ferramentas que sustentam o desenvolvimento web moderno —
 **Metodologia de avaliação:**
 
 | Instrumento | Peso |
-|---|---|
+| --- | --- |
 | Avaliação Parcial 1 (AVP1) | 40% |
 | Avaliação Parcial 2 (AVP2) | 40% |
 | TDEs (Trabalhos Discentes Efetivos) | 20% |
@@ -39,7 +41,9 @@ Frameworks estuda as ferramentas que sustentam o desenvolvimento web moderno —
 ## Sobre o professor
 
 **Ermeson Silva**
-Programador & futurista
+Coordenador Geral de Pós-graduação (UNIFAP)
+Head de Inovação
+Programador, escritor e pesquisador
 
 - Doutorando em Engenharia de Produção e Sistemas
 - Mestre em Design, com foco em Inovação — CESAR
@@ -49,14 +53,12 @@ Programador & futurista
 - Consultor de Design Estratégico e Tecnologia — SENAI
 - Diretor de Ciência, Tecnologia e Inovação de Juazeiro do Norte (2017–2019)
 
-📧 Contato: ermeson.silva@fapce.edu.br
-
 ---
 
 ## Aulas disponíveis
 
 | Aula | Tema | Slide |
-|---|---|---|
+| --- | --- | --- |
 | 01 | Apresentação da disciplina | [Acessar](https://ermeson.github.io/frameworks-2026-2/aula01/) |
 | 02 | Introdução ao JavaScript | [Acessar](https://ermeson.github.io/frameworks-2026-2/aula02/) |
 | 03 | JavaScript: Loops, Arrays e Funções | [Acessar](https://ermeson.github.io/frameworks-2026-2/aula03/) |
@@ -93,7 +95,7 @@ Cada pasta `aulaXX` contém um slide interativo (`index.html`) com o conteúdo a
 
 ## Uso de IA generativa
 
-O uso de IA é permitido apenas como ferramenta de apoio auxiliar ao desenvolvimento — jamais como substituição às entregas do aluno. Isso é passível de reprovação imediata.
+O uso de IA é permitido apenas como ferramenta de apoio auxiliar ao desenvolvimento, jamais como substituição às entregas do aluno. Isso é passível de penalização.
 
 ---
 
