@@ -33,5 +33,3 @@ node_modules/
 .env
 .env.local
 
-# TODO: remover esta linha no dia da aula 05 para publicar o material
-aula05/
