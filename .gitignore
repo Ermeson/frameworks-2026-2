@@ -15,8 +15,12 @@ Desktop.ini
 
 # Editors / IDE
 .idea/
+.vscode/
 *.swp
 *.swo
+
+# Claude Code
+.claude/
 
 # Logs
 *.log
@@ -28,3 +32,6 @@ node_modules/
 # Env
 .env
 .env.local
+
+# TODO: remover esta linha no dia da aula 05 para publicar o material
+aula05/
